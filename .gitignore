@@ -123,29 +123,9 @@ Clients/
 _emails/
 ocr_output/
 
-# Any markdown files that might contain client analysis
-*analysis*.md
-*evidence*.md
-*claim*.md
-*legal*.md
+# ALL MARKDOWN FILES EXCEPT README.md
+*.md
+*.MD
 
-# Specific files with personal/case information
-fx_risk_evidence_extraction.md
-limitation_periods_analysis.md
-claude.md
-CLAUDE.md
-IMPLEMENTATION_SUMMARY.md
-
-# Exclude specific files but allow templates
-!template*.md
-!example*.md
-!sample*.md
-
-# Allow public documentation
+# Allow ONLY README.md - all other md files excluded for privacy
 !README.md
-!GUIDE.md
-!INSTALL.md
-!PRD.md
-!CLAUDE.md
-!OCR_USER_GUIDE.md
-!ACTION_STEPS_FOR_BANK_VICTIM.md
