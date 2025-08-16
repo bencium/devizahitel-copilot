@@ -34,7 +34,11 @@
       "Bash(find:*)",
       "Bash(sqlite3:*)",
       "Bash(cargo run:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(./test_pipeline.sh)",
+      "Bash(cargo test:*)",
+      "Bash(mv:*)",
+      "Bash(./test_ai_system.sh:*)"
     ],
     "deny": [],
     "ask": []

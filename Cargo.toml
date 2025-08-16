@@ -70,3 +70,7 @@ path = "src/main_simple.rs"
 [[bin]]
 name = "devizahitel_legal_research_full"
 path = "src/main.rs"
+
+[[bin]]
+name = "devizahitel_legal_research_ai"
+path = "src/main_dynamic.rs"

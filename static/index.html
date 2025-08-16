@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hungarian FX Mortgage Legal Research System</title>
+    <title>Hungarian FX Mortgage Legal Research System - AI Powered</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -38,6 +38,15 @@
             font-size: 1.2em;
             opacity: 0.9;
         }
+
+        .ai-badge {
+            background: #27ae60;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
         
         .disclaimer {
             background: #fee;
@@ -51,6 +60,42 @@
         .disclaimer h3 {
             color: #c0392b;
             margin-bottom: 10px;
+        }
+
+        .status-bar {
+            background: #e8f4f8;
+            border: 1px solid #3498db;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+
+        .status-dot.active {
+            background: #27ae60;
+        }
+
+        .status-dot.pending {
+            background: #f39c12;
+        }
+
+        .status-dot.error {
+            background: #e74c3c;
         }
         
         .main-grid {
@@ -113,6 +158,12 @@
             background: #2980b9;
             transform: translateY(-2px);
         }
+
+        .btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
         
         .btn-success {
             background: #27ae60;
@@ -129,963 +180,822 @@
         .btn-danger:hover {
             background: #c0392b;
         }
-        
-        .calculation-section {
+
+        .case-summary {
             background: #f8f9fa;
             border: 2px solid #dee2e6;
             border-radius: 8px;
             padding: 20px;
             margin: 15px 0;
         }
-        
-        .input-group {
-            display: grid;
-            grid-template-columns: 200px 1fr 100px;
-            gap: 10px;
+
+        .case-card {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .case-header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
-        
-        .input-group label {
+
+        .bank-name {
+            font-size: 1.2em;
             font-weight: bold;
-            color: #495057;
+            color: #2c3e50;
         }
-        
-        .input-group input {
-            padding: 8px 12px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        
-        .currency {
+
+        .case-strength {
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
             font-weight: bold;
-            color: #6c757d;
         }
-        
-        .result-box {
+
+        .case-strength.very_strong {
             background: #d4edda;
-            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .case-strength.strong {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .case-strength.moderate {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .case-strength.weak {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .loan-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .loan-detail {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid #3498db;
+        }
+
+        .loan-detail .label {
+            font-size: 0.8em;
+            color: #6c757d;
+            margin-bottom: 2px;
+        }
+
+        .loan-detail .value {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .damage-breakdown {
+            background: #e8f5e8;
+            border: 1px solid #27ae60;
             border-radius: 8px;
             padding: 15px;
             margin: 15px 0;
         }
-        
-        .result-box h4 {
-            color: #155724;
-            margin-bottom: 10px;
+
+        .damage-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #ddd;
         }
-        
-        .document-list {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #dee2e6;
+
+        .damage-item:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            border-top: 2px solid #27ae60;
+            padding-top: 10px;
+        }
+
+        .override-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
             border-radius: 8px;
             padding: 15px;
+            margin: 15px 0;
+        }
+
+        .override-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
+            align-items: end;
+            margin-top: 10px;
+        }
+
+        .override-form select,
+        .override-form input {
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        .document-generation {
+            background: #f0f8ff;
+            border: 1px solid #87ceeb;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .document-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .document-type {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .document-type:hover {
+            border-color: #3498db;
             background: #f8f9fa;
         }
-        
-        .document-item {
-            background: white;
-            border: 1px solid #e9ecef;
-            border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.2s ease;
+
+        .document-type.selected {
+            border-color: #27ae60;
+            background: #e8f5e8;
         }
-        
-        .document-item:hover {
-            background: #e3f2fd;
-            border-color: #3498db;
-        }
-        
-        .document-item h5 {
-            color: #2c3e50;
-            margin-bottom: 5px;
-            font-size: 14px;
-        }
-        
-        .document-item p {
-            color: #6c757d;
-            font-size: 12px;
-            margin: 0;
-        }
-        
-        .status {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
-        .status-success {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-warning {
-            background: #fff3cd;
-            color: #856404;
-        }
-        
-        .status-error {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #6c757d;
-        }
-        
+
         .spinner {
-            border: 3px solid #f3f3f4;
+            border: 3px solid #f3f3f3;
             border-top: 3px solid #3498db;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 20px;
+            height: 20px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            display: inline-block;
+            margin-right: 10px;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
+
+        .hidden {
+            display: none;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+
         .tabs {
             display: flex;
             border-bottom: 2px solid #dee2e6;
             margin-bottom: 20px;
         }
-        
+
         .tab {
             padding: 12px 24px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-bottom: none;
             cursor: pointer;
-            border-bottom: 3px solid transparent;
-            font-weight: bold;
-            color: #6c757d;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
         }
-        
+
         .tab.active {
-            color: #3498db;
-            border-bottom-color: #3498db;
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
         }
-        
+
         .tab-content {
             display: none;
         }
-        
+
         .tab-content.active {
             display: block;
-        }
-        
-        .full-width {
-            grid-column: 1 / -1;
-        }
-        
-        .alert {
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-        }
-        
-        .alert-info {
-            background: #d1ecf1;
-            border: 1px solid #bee5eb;
-            color: #0c5460;
-        }
-        
-        .alert-success {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-        }
-        
-        .code-block {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 6px;
-            padding: 15px;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 13px;
-            overflow-x: auto;
-            margin: 10px 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <div class="header">
-            <h1>🏛️ Hungarian FX Mortgage Legal Research System</h1>
-            <p>AI-powered legal research assistant for foreign-currency mortgage litigation</p>
-            <p><strong>System architected by <a href="https://www.bencium.io/" style="color: #ecf0f1;">Bencium.io</a></strong></p>
+            <h1>Hungarian FX Mortgage Legal Research System <span class="ai-badge">🤖 AI Powered</span></h1>
+            <p>Case-Agnostic AI Analysis for Any Hungarian FX Mortgage Case</p>
         </div>
 
-        <!-- Critical Legal Disclaimer -->
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-dot" id="fileWatcherStatus"></span>
+                <span>File Monitoring: <span id="fileWatcherText">Checking...</span></span>
+            </div>
+            <div class="status-item">
+                <span class="status-dot" id="documentsStatus"></span>
+                <span>Documents: <span id="documentsCount">0</span> files</span>
+            </div>
+            <div class="status-item">
+                <span class="status-dot" id="analysisStatus"></span>
+                <span>Analysis: <span id="analysisText">Not analyzed</span></span>
+            </div>
+            <div class="status-item">
+                <span class="status-dot" id="aiStatus"></span>
+                <span>AI: <span id="aiText">Ready</span></span>
+            </div>
+        </div>
+
         <div class="disclaimer">
-            <h3>⚠️ IMPORTANT LEGAL DISCLAIMER</h3>
-            <p><strong>THIS SOFTWARE IS NOT FINANCIAL OR LEGAL ADVICE</strong></p>
-            <p>This system provides research assistance only. Generated documents must be reviewed by qualified legal professionals. Bencium and contributors are NOT LIABLE for any damages or legal consequences.</p>
+            <h3>⚠️ AI-Powered Legal Research Tool</h3>
+            <p>This system uses artificial intelligence to analyze your FX mortgage case documents and generate legal strategies. All analysis is case-specific and based on your actual documents. Always verify AI-generated content with a qualified lawyer.</p>
         </div>
 
-        <!-- Main Content Grid -->
-        <div class="main-grid">
-            <!-- OCR Instructions Card -->
-            <div class="card">
-                <h2>📄 Step 1: Convert Documents to Text</h2>
-                <div class="instruction-steps">
-                    <h4>Manual OCR Process:</h4>
-                    <ol>
-                        <li><strong>Collect all documents:</strong> Loan contracts, amendments, bank correspondence, payment statements</li>
-                        <li><strong>Open Terminal:</strong> Navigate to mistral_ocr_processor folder</li>
-                        <li><strong>Run OCR command:</strong></li>
-                    </ol>
-                    <div class="code-block">
-cd mistral_ocr_processor<br>
-python3 main.py --input-dir ../contracts_to_process --output-dir ../ocr_output --verbose
-                    </div>
-                    <h4>Supported formats:</h4>
-                    <ul>
-                        <li>✅ PDF files (contracts, statements)</li>
-                        <li>✅ Images (JPG, PNG, AVIF - scanned documents)</li>
-                        <li>✅ Word documents (DOC, DOCX)</li>
-                        <li>✅ RTF files (rich text format)</li>
-                    </ul>
-                </div>
-                <button class="btn" onclick="refreshDocuments()">🔄 Refresh Document List</button>
-            </div>
-
-            <!-- Analysis Card -->
-            <div class="card">
-                <h2>⚖️ Step 2: Analyze Processed Documents</h2>
-                <div class="alert alert-info">
-                    <strong>Current Status:</strong> <span id="documentCount">Loading...</span> documents found in ocr_output folder
-                </div>
-                
-                <button class="btn btn-success" onclick="analyzeDocuments()" id="analyzeBtn">
-                    🔍 ANALYZE DOCUMENTS
-                </button>
-                
-                <div id="analysisResults" style="display: none;">
-                    <div class="result-box">
-                        <h4>📋 Analysis Complete</h4>
-                        <p id="analysisStatus">Analysis results will appear here...</p>
-                    </div>
-                </div>
-                
-                <div class="instruction-steps">
-                    <h4>Analysis includes:</h4>
-                    <ul>
-                        <li>🔍 FX risk disclosure violations</li>
-                        <li>📊 Exchange rate spread analysis</li>
-                        <li>⚖️ Legal precedent matching</li>
-                        <li>💰 Financial damage calculations</li>
-                        <li>📋 Broker liability assessment</li>
-                    </ul>
-                </div>
-            </div>
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('analysis')">🔍 Case Analysis</div>
+            <div class="tab" onclick="showTab('documents')">📄 Document Generation</div>
+            <div class="tab" onclick="showTab('corrections')">✏️ Corrections & Overrides</div>
+            <div class="tab" onclick="showTab('actions')">📋 Action Steps</div>
         </div>
 
-        <!-- Tabs for Different Sections -->
-        <div class="card full-width">
-            <div class="tabs">
-                <div class="tab active" onclick="showTab('documents')">📁 Processed Documents</div>
-                <div class="tab" onclick="showTab('calculations')">💰 Financial Calculations</div>
-                <div class="tab" onclick="showTab('precedents')">⚖️ Legal Precedents</div>
-                <div class="tab" onclick="showTab('actions')">📋 Action Steps</div>
-            </div>
-
-            <!-- Documents Tab -->
-            <div id="documents" class="tab-content active">
-                <h2>📁 Processed Documents from OCR Output</h2>
-                
-                <!-- OCR Documents Status Confirmation -->
-                <div id="ocrStatus" class="alert alert-info">
-                    <strong>📄 OCR Status:</strong> <span id="ocrStatusText">Scanning ocr_output folder...</span>
-                </div>
-                
-                <!-- Progress Indicator -->
-                <div id="ocrProgress" style="display: none;">
-                    <h3>🔄 Processing Progress</h3>
+        <!-- Analysis Tab -->
+        <div id="analysis" class="tab-content active">
+            <div class="main-grid">
+                <div class="card">
+                    <h2>📁 Document Processing</h2>
+                    
                     <div class="instruction-steps">
-                        <ul id="progressList">
-                            <li id="progress-scan">📂 Scanning OCR output folder... <span class="status status-warning">⏳ In Progress</span></li>
-                            <li id="progress-extract">🔍 Extracting contract clauses... <span class="status status-warning">⏳ Pending</span></li>
-                            <li id="progress-match">⚖️ Matching legal precedents... <span class="status status-warning">⏳ Pending</span></li>
-                            <li id="progress-calculate">💰 Calculating financial damages... <span class="status status-warning">⏳ Pending</span></li>
-                            <li id="progress-complete">✅ Analysis complete... <span class="status status-warning">⏳ Pending</span></li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <div id="documentsList" class="document-list">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        Loading documents from ocr_output folder...
-                    </div>
-                </div>
-            </div>
-
-            <!-- Financial Calculations Tab -->
-            <div id="calculations" class="tab-content">
-                <h2>💰 Comprehensive Financial Recovery Calculation</h2>
-                
-                <!-- Erste CHF Loan Calculation -->
-                <div class="calculation-section">
-                    <h3>🏦 Erste CHF Loan (157,055 CHF)</h3>
-                    
-                    <div class="input-group">
-                        <label>Original Loan Amount:</label>
-                        <input type="number" id="chf_original" placeholder="157055" value="157055">
-                        <span class="currency">CHF</span>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Total Payments Made:</label>
-                        <input type="number" id="chf_payments" placeholder="Enter total paid">
-                        <span class="currency">HUF</span>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Loan Start Date:</label>
-                        <input type="date" id="chf_start_date" value="2006-01-01">
-                        <span class="currency">YYYY-MM-DD</span>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Current Date:</label>
-                        <input type="date" id="chf_end_date" value="2025-08-16">
-                        <span class="currency">YYYY-MM-DD</span>
-                    </div>
-                    
-                    <button class="btn" onclick="calculateCHFRecovery()">💰 Calculate CHF Recovery</button>
-                    
-                    <div id="chfResults" class="result-box" style="display: none;">
-                        <h4>CHF Loan Recovery Calculation:</h4>
-                        <div id="chfBreakdown"></div>
-                    </div>
-                </div>
-
-                <!-- Aegon EUR Loan Calculation -->
-                <div class="calculation-section">
-                    <h3>🏦 Aegon EUR Loan (103,847.8 EUR)</h3>
-                    
-                    <div class="input-group">
-                        <label>Original Loan Amount:</label>
-                        <input type="number" id="eur_original" placeholder="103847.8" value="103847.8">
-                        <span class="currency">EUR</span>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Total Payments Made:</label>
-                        <input type="number" id="eur_payments" placeholder="Enter total paid">
-                        <span class="currency">HUF</span>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Monthly Spread Loss:</label>
-                        <input type="number" id="eur_monthly_spread" placeholder="35000" value="35000">
-                        <span class="currency">HUF/month</span>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Months Paid:</label>
-                        <input type="number" id="eur_months" placeholder="180">
-                        <span class="currency">months</span>
-                    </div>
-                    
-                    <button class="btn" onclick="calculateEURRecovery()">💰 Calculate EUR Recovery</button>
-                    
-                    <div id="eurResults" class="result-box" style="display: none;">
-                        <h4>EUR Loan Recovery Calculation:</h4>
-                        <div id="eurBreakdown"></div>
-                    </div>
-                </div>
-
-                <!-- Additional Damages -->
-                <div class="calculation-section">
-                    <h3>📋 Additional Damage Categories</h3>
-                    
-                    <div class="input-group">
-                        <label>Legal Costs:</label>
-                        <input type="number" id="legal_costs" placeholder="1500000" value="1500000">
-                        <span class="currency">HUF</span>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Professional Fees:</label>
-                        <input type="number" id="professional_fees" placeholder="800000" value="800000">
-                        <span class="currency">HUF</span>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Administrative Costs:</label>
-                        <input type="number" id="admin_costs" placeholder="400000" value="400000">
-                        <span class="currency">HUF</span>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Emotional Damages:</label>
-                        <input type="number" id="emotional_damages" placeholder="2000000" value="2000000">
-                        <span class="currency">HUF</span>
-                    </div>
-                    
-                    <button class="btn" onclick="calculateTotal()">💰 Calculate Total Recovery</button>
-                    
-                    <div id="totalResults" class="result-box" style="display: none;">
-                        <h4>💰 TOTAL COMPREHENSIVE RECOVERY:</h4>
-                        <div id="totalBreakdown"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Legal Precedents Tab -->
-            <div id="precedents" class="tab-content">
-                <h2>⚖️ Applicable Legal Precedents</h2>
-                
-                <!-- Precedents Status Confirmation -->
-                <div id="precedentsStatus" class="alert alert-info">
-                    <strong>📋 Status:</strong> <span id="precedentsStatusText">Checking precedents database...</span>
-                </div>
-                
-                <!-- Add More Precedents Option -->
-                <div id="addPrecedentsSection" style="display: none;">
-                    <h3>📁 Manual Precedent Management</h3>
-                    <div class="instruction-steps">
-                        <h4>Add More Legal Precedents:</h4>
+                        <h4>Automatic OCR Document Processing</h4>
                         <ol>
-                            <li>Place additional case files (.pdf, .md, .txt) in <code>legal_precedents/</code> folder</li>
-                            <li>Include case citation format: <code>C-XXX/XX Case Name (Year)</code></li>
-                            <li>Click "Refresh Precedents" to reload database</li>
-                            <li>System will automatically extract citations and key rulings</li>
+                            <li>Place your scanned documents in the <code>ocr_output</code> folder</li>
+                            <li>Supported formats: PDF, images (JPG, PNG), text files</li>
+                            <li>System monitors folder for changes automatically</li>
+                            <li>Click "Analyze Case" to process all documents with AI</li>
                         </ol>
                     </div>
-                    <button class="btn" onclick="refreshPrecedents()">🔄 Refresh Precedents Database</button>
-                    <button class="btn btn-success" onclick="addPrecedentFile()">📁 Add Precedent File</button>
+
+                    <p><strong>Current Status:</strong></p>
+                    <div id="documentStatus" class="result-box">
+                        <p>Checking document folder...</p>
+                    </div>
+
+                    <button class="btn btn-success" onclick="startAnalysis()" id="analyzeBtn">
+                        🤖 Analyze Case with AI
+                    </button>
                 </div>
-                
-                <div id="precedentsList">
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        Loading legal precedents from database...
+
+                <div class="card">
+                    <h2>⚖️ Legal Precedents</h2>
+                    <div id="precedentsContainer">
+                        <p>Loading precedents...</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Action Steps Tab -->
-            <div id="actions" class="tab-content">
-                <h2>📋 Action Steps for Bank Victims</h2>
+            <!-- Case Results -->
+            <div id="caseResults" class="hidden">
+                <div class="card">
+                    <h2>📊 Case Analysis Results</h2>
+                    <div id="caseAnalysisContent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Generation Tab -->
+        <div id="documents" class="tab-content">
+            <div class="card">
+                <h2>📄 AI-Generated Legal Documents</h2>
                 
-                <div class="alert alert-success">
-                    <h4>🎯 Your Strong Legal Position (2025):</h4>
-                    <ul>
-                        <li>✅ CJEU ruling C-630/23 in your favor (April 2025)</li>
-                        <li>✅ Hungarian Supreme Court aligned (Kúria 10/2025)</li>
-                        <li>✅ Clear evidence of inadequate FX disclosure</li>
-                        <li>✅ Growing political pressure for bank resolution</li>
-                        <li>✅ 43,000+ victims organizing together</li>
-                    </ul>
-                </div>
-
-                <div class="calculation-section">
-                    <h3>🚨 IMMEDIATE ACTIONS (Within 7 Days)</h3>
-                    <div class="instruction-steps">
-                        <h4>Step 1: Document Collection</h4>
-                        <ul>
-                            <li>✅ Original loan contracts (Erste 2006 CHF, Aegon 2010 EUR)</li>
-                            <li>✅ All amendments and modifications</li>
-                            <li>✅ Bank correspondence and notices</li>
-                            <li>✅ Payment statements showing all transactions</li>
-                            <li>✅ Property documents (ownership, mortgage registrations)</li>
-                            <li>✅ Insurance policies related to loans</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="calculation-section">
-                    <h3>💰 Financial Documentation (Within 14 Days)</h3>
-                    <div class="instruction-steps">
-                        <h4>Calculate and Document ALL Losses:</h4>
-                        <ul>
-                            <li>💰 Total amount paid vs. original loan amount</li>
-                            <li>📈 Exchange rate losses (bank rates vs. MNB central rates)</li>
-                            <li>💸 Excessive interest and fees paid</li>
-                            <li>🔄 Lost interest on overpaid amounts (compound interest)</li>
-                            <li>📊 Opportunity cost damages (foregone investment returns)</li>
-                            <li>📉 Inflation adjustment damages (purchasing power loss)</li>
-                            <li>💳 Credit rating damages</li>
-                            <li>😰 Psychological/emotional damages</li>
-                            <li>🤝 Broker liability damages (inadequate advice)</li>
-                            <li>📋 Insurance assignment violations</li>
-                            <li>⚖️ Legal and professional costs</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="calculation-section">
-                    <h3>⚖️ Legal Options</h3>
+                <div class="document-generation">
+                    <h4>Select Documents to Generate:</h4>
                     
-                    <div class="instruction-steps">
-                        <h4>Option A: Financial Arbitration Board (PBT)</h4>
-                        <ul>
-                            <li><strong>Timeline:</strong> 3-6 months</li>
-                            <li><strong>Cost:</strong> Free</li>
-                            <li><strong>Success Rate:</strong> 60-70% settlement</li>
-                            <li><strong>Link:</strong> <a href="https://www.mnb.hu/bekeltetes">https://www.mnb.hu/bekeltetes</a></li>
-                        </ul>
+                    <div class="document-types">
+                        <div class="document-type" data-type="central_bank">
+                            <h5>🏛️ Central Bank Complaint</h5>
+                            <p>Formal complaint to MNB (Hungarian Central Bank)</p>
+                        </div>
+                        <div class="document-type" data-type="financial_authority">
+                            <h5>⚖️ Financial Authority Submission</h5>
+                            <p>PBT (Financial Arbitration Board) complaint</p>
+                        </div>
+                        <div class="document-type" data-type="lawyer_consultation">
+                            <h5>👨‍💼 Lawyer Consultation Letter</h5>
+                            <p>Professional legal consultation request</p>
+                        </div>
                     </div>
 
-                    <div class="instruction-steps">
-                        <h4>Option B: Court Litigation</h4>
-                        <ul>
-                            <li><strong>Timeline:</strong> 12-24 months</li>
-                            <li><strong>Cost:</strong> 3-6% of claim</li>
-                            <li><strong>Success Rate:</strong> 70-85% with new CJEU ruling</li>
-                            <li><strong>Key Arguments:</strong> C-630/23, Banking Act 219/A-B§, Civil Code 241§</li>
-                        </ul>
+                    <button class="btn btn-success" onclick="generateDocuments()" id="generateBtn" disabled>
+                        📝 Generate Selected Documents
+                    </button>
+                </div>
+
+                <div id="generatedDocuments" class="hidden">
+                    <h4>Generated Documents:</h4>
+                    <div id="documentList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Corrections Tab -->
+        <div id="corrections" class="tab-content">
+            <div class="card">
+                <h2>✏️ Manual Corrections & Data Overrides</h2>
+                
+                <div class="override-section">
+                    <h4>⚠️ AI Interpretation Corrections</h4>
+                    <p>If the AI misinterpreted figures from your documents, you can override specific values here:</p>
+                    
+                    <div id="overrideOptions" class="hidden">
+                        <div class="override-form">
+                            <select id="overrideField">
+                                <option value="">Select field to correct...</option>
+                            </select>
+                            <input type="text" id="overrideValue" placeholder="Enter correct value">
+                            <button class="btn" onclick="applyOverride()">Apply</button>
+                        </div>
+                    </div>
+
+                    <div id="overrideHelp">
+                        <p>Analyze your case first to see correction options.</p>
                     </div>
                 </div>
 
-                <div class="alert alert-info">
-                    <h4>📞 Key Contacts:</h4>
-                    <ul>
-                        <li><strong>PBT (Financial Arbitration):</strong> +36 80 203 776</li>
-                        <li><strong>MNB Customer Service:</strong> +36 80 203 776</li>
-                        <li><strong>Consumer Protection:</strong> +36 1 459 4800</li>
-                        <li><strong>Bank Victims Association:</strong> Via Facebook groups</li>
-                    </ul>
+                <div id="userOverrides" class="hidden">
+                    <h4>Applied Corrections:</h4>
+                    <div id="overridesList"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Steps Tab -->
+        <div id="actions" class="tab-content">
+            <div class="card">
+                <h2>📋 Personalized Action Plan</h2>
+                <div id="actionStepsContent">
+                    <p>Complete case analysis to generate your personalized action plan.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Tab functionality
+        let currentAnalysis = null;
+        let selectedDocumentTypes = new Set();
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSystemStatus();
+            loadPrecedents();
+            setupDocumentTypeSelection();
+            
+            // Check status every 30 seconds
+            setInterval(checkSystemStatus, 30000);
+        });
+
         function showTab(tabName) {
-            // Hide all tab contents
+            // Hide all tabs
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
             });
-            
-            // Remove active class from all tabs
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
-            // Show selected tab content
+
+            // Show selected tab
             document.getElementById(tabName).classList.add('active');
-            
-            // Add active class to clicked tab
             event.target.classList.add('active');
-            
-            // Load content based on tab
-            if (tabName === 'documents') {
-                loadDocuments();
-            } else if (tabName === 'precedents') {
-                loadPrecedents();
+        }
+
+        async function checkSystemStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const status = await response.json();
+                
+                updateStatusIndicator('fileWatcherStatus', 'fileWatcherText', 
+                    status.file_watcher_enabled ? 'active' : 'error',
+                    status.file_watcher_enabled ? 'Active' : 'Disabled'
+                );
+                
+                updateStatusIndicator('documentsStatus', 'documentsCount',
+                    status.monitored_files_count > 0 ? 'active' : 'pending',
+                    status.monitored_files_count
+                );
+                
+                updateStatusIndicator('analysisStatus', 'analysisText',
+                    status.analysis_status === 'completed' ? 'active' : 
+                    status.analysis_status === 'not_analyzed' ? 'pending' : 'error',
+                    status.analysis_status === 'completed' ? 'Completed' : 'Not analyzed'
+                );
+
+                updateStatusIndicator('aiStatus', 'aiText', 'active', 'Ready');
+
+                // Update document status
+                updateDocumentStatus(status);
+
+                // If analysis is completed, load it
+                if (status.analysis_status === 'completed') {
+                    await loadCurrentAnalysis();
+                }
+
+            } catch (error) {
+                console.error('Error checking status:', error);
+                updateStatusIndicator('aiStatus', 'aiText', 'error', 'Error');
             }
         }
 
-        // Load documents from ocr_output with status confirmation
-        async function loadDocuments() {
-            const documentsList = document.getElementById('documentsList');
-            const statusDiv = document.getElementById('ocrStatus');
-            const statusText = document.getElementById('ocrStatusText');
+        function updateStatusIndicator(dotId, textId, status, text) {
+            const dot = document.getElementById(dotId);
+            const textElement = document.getElementById(textId);
             
-            documentsList.innerHTML = '<div class="loading"><div class="spinner"></div>Loading processed documents...</div>';
-            statusText.textContent = 'Scanning ocr_output folder...';
-            
+            dot.className = `status-dot ${status}`;
+            textElement.textContent = text;
+        }
+
+        function updateDocumentStatus(status) {
+            const statusDiv = document.getElementById('documentStatus');
+            if (status.monitored_files_count > 0) {
+                statusDiv.innerHTML = `
+                    <h4>✅ Ready for Analysis</h4>
+                    <p>Found <strong>${status.monitored_files_count}</strong> documents in OCR folder</p>
+                    <p>File monitoring: <strong>${status.file_watcher_enabled ? 'Active' : 'Disabled'}</strong></p>
+                `;
+                statusDiv.className = 'result-box';
+            } else {
+                statusDiv.innerHTML = `
+                    <h4>⚠️ No Documents Found</h4>
+                    <p>Please add your scanned documents to the <code>ocr_output</code> folder</p>
+                `;
+                statusDiv.className = 'error-message';
+            }
+        }
+
+        async function loadPrecedents() {
             try {
-                // Simulate scanning folder delay
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                const response = await fetch('/api/cases');
+                const precedents = await response.json();
                 
-                // Real documents from the actual ocr_output folder (116 total items)
-                const actualDocuments = [
-                    // Key Contract Documents
-                    { name: "erste2006_os_kolcs_szerz.md", type: "CHF Contract", status: "Processed", size: "45KB", violations: ["FX Risk Disclosure", "Transparency"] },
-                    { name: "aegon_jelzalogszerz.md", type: "EUR Contract", status: "Processed", size: "38KB", violations: ["Broker Liability", "Exchange Rate Spread"] },
-                    { name: "erste_fennallotartozas.md", type: "Payment Statement", status: "Processed", size: "12KB", violations: ["Excessive Fees"] },
-                    { name: "aegon_valasz.md", type: "Bank Response", status: "Processed", size: "8KB", violations: ["Inadequate Response"] },
-                    { name: "erste_elidegen_torl2010.md", type: "Mortgage Transfer", status: "Processed", size: "15KB", violations: ["Insurance Assignment"] },
-                    { name: "AEGON-calculation.rtf", type: "Bank Calculation", status: "Processed", size: "6KB", violations: ["Rate Manipulation"] },
-                    { name: "Kutatnivaló.rtfd/TXT.rtf", type: "Legal Research", status: "Processed", size: "18KB", violations: ["Broker Analysis"] },
-                    { name: "Mit lehetne tenni?.rtfd/TXT.rtf", type: "Legal Strategy", status: "Processed", size: "22KB", violations: ["Comprehensive Analysis"] },
+                const container = document.getElementById('precedentsContainer');
+                container.innerHTML = precedents.map(p => `
+                    <div class="document-item">
+                        <strong>${p.case_number}</strong> - ${p.case_name}<br>
+                        <small>${p.court} (${p.date.split('T')[0]})</small><br>
+                        <em>${p.key_ruling.substring(0, 100)}...</em>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Error loading precedents:', error);
+                document.getElementById('precedentsContainer').innerHTML = 
+                    '<p class="error-message">Error loading precedents</p>';
+            }
+        }
+
+        async function startAnalysis() {
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            analyzeBtn.disabled = true;
+            analyzeBtn.innerHTML = '<span class="spinner"></span>Analyzing with AI...';
+
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        force_reanalyze: true
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentAnalysis = result.analysis;
+                    displayAnalysisResults(result.analysis);
+                    setupOverrideOptions(result.analysis);
+                    displayActionSteps(result.analysis);
                     
-                    // Additional processed documents (showing first 20 of 116 total)
-                    { name: "aegon_aszf.md", type: "Terms & Conditions", status: "Processed", size: "25KB", violations: ["Unfair Terms"] },
-                    { name: "aegon_foldhiv.md", type: "Land Registry", status: "Processed", size: "14KB", violations: ["Registration Issues"] },
-                    { name: "erste_kozj.md", type: "Notary Document", status: "Processed", size: "20KB", violations: ["Authentication Issues"] },
-                    { name: "erste_megallapodas.md", type: "Bank Agreement", status: "Processed", size: "30KB", violations: ["Contract Modifications"] },
-                    { name: "aegon_kivaltas_szerz.md", type: "Redemption Contract", status: "Processed", size: "22KB", violations: ["Early Termination"] },
-                    { name: "aegon_pszaf.md", type: "Regulator Notice", status: "Processed", size: "16KB", violations: ["Compliance Issues"] },
-                    { name: "erste_foldhiv.md", type: "Land Registry (Erste)", status: "Processed", size: "18KB", violations: ["Mortgage Registration"] },
-                    { name: "aegon_kozjegyz.md", type: "Notarized Document", status: "Processed", size: "24KB", violations: ["Legal Formalities"] },
-                    { name: "megvett_ingatlan.md", type: "Property Purchase", status: "Processed", size: "28KB", violations: ["Transfer Issues"] },
-                    { name: "atadas_atvetel.md", type: "Handover Document", status: "Processed", size: "12KB", violations: ["Property Handover"] },
-                    { name: "terkep_szines2.md", type: "Property Map", status: "Processed", size: "8KB", violations: ["Boundary Issues"] },
-                    { name: "processing_summary.md", type: "OCR Summary", status: "Processed", size: "5KB", violations: ["Processing Log"] }
-                ];
-                
-                // Total count includes all 116 files and folders in ocr_output
-                const totalOcrCount = 116;
-                const displayDocuments = actualDocuments;
-                
-                // Update OCR status to success with accurate count
-                statusDiv.className = 'alert alert-success';
-                statusText.innerHTML = `✅ <strong>OCR Documents Ready!</strong> Found ${totalOcrCount} processed documents in ocr_output folder`;
-                
-                let html = '';
-                displayDocuments.forEach(doc => {
-                    html += `
-                        <div class="document-item" onclick="viewDocument('${doc.name}')">
-                            <h5>${doc.name}</h5>
-                            <p><strong>Type:</strong> ${doc.type} | <strong>Size:</strong> ${doc.size}</p>
-                            <p><strong>Violations Found:</strong> ${doc.violations.join(', ')}</p>
-                            <span class="status status-success">✅ ${doc.status}</span>
+                    // Enable document generation
+                    document.getElementById('generateBtn').disabled = false;
+                    
+                    showSuccessMessage('Case analysis completed successfully!');
+                } else {
+                    showErrorMessage(`Analysis failed: ${result.error}`);
+                }
+
+            } catch (error) {
+                console.error('Error during analysis:', error);
+                showErrorMessage(`Analysis error: ${error.message}`);
+            } finally {
+                analyzeBtn.disabled = false;
+                analyzeBtn.innerHTML = '🤖 Analyze Case with AI';
+            }
+        }
+
+        function displayAnalysisResults(analysis) {
+            const resultsDiv = document.getElementById('caseResults');
+            const contentDiv = document.getElementById('caseAnalysisContent');
+            
+            let html = `
+                <div class="case-summary">
+                    <h3>📊 Analysis Summary</h3>
+                    <p><strong>Total Recovery Potential:</strong> <span style="color: #27ae60; font-size: 1.2em; font-weight: bold;">${formatCurrency(analysis.total_recovery)} HUF</span></p>
+                    <p><strong>Analysis Date:</strong> ${analysis.analysis_date}</p>
+                    <p><strong>Number of Cases:</strong> ${analysis.cases.length}</p>
+                    <p><strong>Confidence Level:</strong> ${analysis.confidence_level}</p>
+                </div>
+            `;
+
+            // Display each case
+            analysis.cases.forEach((caseData, index) => {
+                html += `
+                    <div class="case-card">
+                        <div class="case-header">
+                            <span class="bank-name">${caseData.bank_name}</span>
+                            <span class="case-strength ${caseData.case_strength}">${caseData.case_strength.replace('_', ' ')}</span>
                         </div>
+                        
+                        <div class="loan-info">
+                            ${caseData.loan_contracts.map(contract => `
+                                <div class="loan-detail">
+                                    <div class="label">${contract.loan_type} Loan</div>
+                                    <div class="value">${formatCurrency(contract.original_amount)} ${contract.currency}</div>
+                                </div>
+                                <div class="loan-detail">
+                                    <div class="label">Start Date</div>
+                                    <div class="value">${contract.start_date}</div>
+                                </div>
+                                <div class="loan-detail">
+                                    <div class="label">FX Risk Disclosure</div>
+                                    <div class="value">${contract.fx_risk_disclosure}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="damage-breakdown">
+                            <h4>💰 Estimated Damages</h4>
+                            <div class="damage-item">
+                                <span><strong>Total Recovery for ${caseData.bank_name}:</strong></span>
+                                <span><strong>${formatCurrency(caseData.total_damages)} HUF</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            contentDiv.innerHTML = html;
+            resultsDiv.classList.remove('hidden');
+        }
+
+        function setupOverrideOptions(analysis) {
+            const selectElement = document.getElementById('overrideField');
+            const optionsDiv = document.getElementById('overrideOptions');
+            const helpDiv = document.getElementById('overrideHelp');
+            
+            selectElement.innerHTML = '<option value="">Select field to correct...</option>';
+            
+            analysis.cases.forEach((caseData, caseIndex) => {
+                caseData.loan_contracts.forEach((contract, contractIndex) => {
+                    selectElement.innerHTML += `
+                        <option value="cases[${caseIndex}].loan_contracts[${contractIndex}].original_amount">
+                            ${caseData.bank_name} - Original Amount (${contract.original_amount} ${contract.currency})
+                        </option>
+                        <option value="cases[${caseIndex}].loan_contracts[${contractIndex}].currency">
+                            ${caseData.bank_name} - Currency (${contract.currency})
+                        </option>
+                        <option value="cases[${caseIndex}].loan_contracts[${contractIndex}].start_date">
+                            ${caseData.bank_name} - Start Date (${contract.start_date})
+                        </option>
                     `;
                 });
                 
-                // Add note about additional documents
-                html += `
-                    <div class="alert alert-info" style="margin-top: 20px;">
-                        <strong>📁 Complete Document Set:</strong> Showing ${displayDocuments.length} key documents. 
-                        Total of <strong>${totalOcrCount} files and folders</strong> processed in ocr_output folder including:
-                        <br>• Contract documents and amendments
-                        <br>• Bank statements and correspondence  
-                        <br>• Property documents and land registry files
-                        <br>• Legal research and strategy documents
-                        <br>• Images and scanned materials
-                    </div>
-                `;
-                
-                documentsList.innerHTML = html;
-                document.getElementById('documentCount').textContent = `${totalOcrCount} documents`;
-                
-            } catch (error) {
-                statusDiv.className = 'alert alert-error';
-                statusText.textContent = '❌ Error scanning ocr_output folder';
-                documentsList.innerHTML = '<div class="alert alert-error">❌ Error loading documents from ocr_output folder</div>';
-            }
+                caseData.payment_history.forEach((payment, paymentIndex) => {
+                    selectElement.innerHTML += `
+                        <option value="cases[${caseIndex}].payment_history[${paymentIndex}].total_paid">
+                            ${caseData.bank_name} - Total Paid (${payment.total_paid} HUF)
+                        </option>
+                    `;
+                });
+            });
+            
+            optionsDiv.classList.remove('hidden');
+            helpDiv.classList.add('hidden');
         }
 
-        // Load legal precedents with confirmation
-        async function loadPrecedents() {
-            const statusDiv = document.getElementById('precedentsStatus');
-            const statusText = document.getElementById('precedentsStatusText');
-            const addSection = document.getElementById('addPrecedentsSection');
+        async function applyOverride() {
+            const field = document.getElementById('overrideField').value;
+            const value = document.getElementById('overrideValue').value;
             
-            try {
-                statusText.textContent = 'Connecting to precedents database...';
-                
-                const response = await fetch('/api/cases?fx_only=true&limit=10');
-                if (response.ok) {
-                    const precedents = await response.json();
-                    
-                    // Update status to success
-                    statusDiv.className = 'alert alert-success';
-                    statusText.innerHTML = `✅ <strong>Precedents Database Ready!</strong> Loaded ${precedents.length} legal precedents successfully`;
-                    
-                    // Show add precedents section
-                    addSection.style.display = 'block';
-                    
-                    displayPrecedents(precedents);
-                } else {
-                    statusDiv.className = 'alert alert-error';
-                    statusText.textContent = '❌ Failed to connect to precedents database';
-                    document.getElementById('precedentsList').innerHTML = '<div class="alert alert-error">❌ Failed to load precedents</div>';
-                }
-            } catch (error) {
-                statusDiv.className = 'alert alert-error';
-                statusText.textContent = '❌ Error connecting to precedents database';
-                document.getElementById('precedentsList').innerHTML = '<div class="alert alert-error">❌ Error loading precedents</div>';
-            }
-        }
-
-        // Display precedents
-        function displayPrecedents(precedents) {
-            const precedentsList = document.getElementById('precedentsList');
-            
-            if (precedents.length === 0) {
-                precedentsList.innerHTML = '<p style="text-align: center; color: #7f8c8d;">No precedents found</p>';
+            if (!field || !value) {
+                showErrorMessage('Please select a field and enter a value');
                 return;
             }
             
-            const html = precedents.map(precedent => `
-                <div class="document-item">
-                    <h5>${precedent.case_number} - ${precedent.case_name}</h5>
-                    <p><strong>Court:</strong> ${precedent.court} | <strong>Date:</strong> ${new Date(precedent.date).toLocaleDateString()}</p>
-                    <p><strong>Currency:</strong> ${precedent.currency} | <strong>Significance:</strong> ${(precedent.significance_score * 100).toFixed(0)}%</p>
-                    <p><strong>Key Ruling:</strong> ${precedent.key_ruling}</p>
-                    <span class="status status-success">✅ ${precedent.case_type}</span>
+            try {
+                const response = await fetch('/api/override', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        field_path: field,
+                        new_value: value,
+                        reason: 'User correction'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showSuccessMessage('Override applied successfully! Reanalyzing...');
+                    
+                    // Reload the updated analysis
+                    setTimeout(async () => {
+                        await loadCurrentAnalysis();
+                        document.getElementById('overrideValue').value = '';
+                    }, 2000);
+                } else {
+                    showErrorMessage(`Override failed: ${result.error}`);
+                }
+                
+            } catch (error) {
+                console.error('Error applying override:', error);
+                showErrorMessage(`Override error: ${error.message}`);
+            }
+        }
+
+        async function loadCurrentAnalysis() {
+            try {
+                const response = await fetch('/api/analysis');
+                const result = await response.json();
+                
+                if (result.success && result.analysis) {
+                    currentAnalysis = result.analysis;
+                    displayAnalysisResults(result.analysis);
+                    setupOverrideOptions(result.analysis);
+                    displayActionSteps(result.analysis);
+                    document.getElementById('generateBtn').disabled = false;
+                }
+            } catch (error) {
+                console.error('Error loading current analysis:', error);
+            }
+        }
+
+        function setupDocumentTypeSelection() {
+            document.querySelectorAll('.document-type').forEach(element => {
+                element.addEventListener('click', function() {
+                    const type = this.dataset.type;
+                    
+                    if (selectedDocumentTypes.has(type)) {
+                        selectedDocumentTypes.delete(type);
+                        this.classList.remove('selected');
+                    } else {
+                        selectedDocumentTypes.add(type);
+                        this.classList.add('selected');
+                    }
+                });
+            });
+        }
+
+        async function generateDocuments() {
+            if (selectedDocumentTypes.size === 0) {
+                showErrorMessage('Please select at least one document type');
+                return;
+            }
+            
+            const generateBtn = document.getElementById('generateBtn');
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<span class="spinner"></span>Generating Documents...';
+            
+            try {
+                const response = await fetch('/api/generate-documents', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        document_types: Array.from(selectedDocumentTypes)
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayGeneratedDocuments(result.documents);
+                    showSuccessMessage(`Successfully generated ${result.documents.length} documents`);
+                } else {
+                    showErrorMessage(`Document generation failed: ${result.error}`);
+                }
+                
+            } catch (error) {
+                console.error('Error generating documents:', error);
+                showErrorMessage(`Generation error: ${error.message}`);
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '📝 Generate Selected Documents';
+            }
+        }
+
+        function displayGeneratedDocuments(documents) {
+            const container = document.getElementById('generatedDocuments');
+            const listDiv = document.getElementById('documentList');
+            
+            listDiv.innerHTML = documents.map(doc => `
+                <div class="case-card">
+                    <h4>${doc.document_type.replace('_', ' ')} - ${doc.bank_name}</h4>
+                    <p><strong>Generated:</strong> ${doc.generated_date}</p>
+                    <button class="btn" onclick="downloadDocument('${doc.filename}', '${encodeURIComponent(doc.content)}')">
+                        📄 Download ${doc.filename}
+                    </button>
+                    <details style="margin-top: 10px;">
+                        <summary>Preview Content</summary>
+                        <pre style="background: #f8f9fa; padding: 15px; border-radius: 4px; margin-top: 10px; white-space: pre-wrap; font-size: 0.9em;">${doc.content.substring(0, 500)}...</pre>
+                    </details>
                 </div>
             `).join('');
             
-            precedentsList.innerHTML = html;
+            container.classList.remove('hidden');
         }
 
-        // Analyze documents with real-time progress
-        async function analyzeDocuments() {
-            const analyzeBtn = document.getElementById('analyzeBtn');
-            const analysisResults = document.getElementById('analysisResults');
-            const analysisStatus = document.getElementById('analysisStatus');
-            const progressDiv = document.getElementById('ocrProgress');
+        function downloadDocument(filename, content) {
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + content);
+            element.setAttribute('download', filename);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+
+        function displayActionSteps(analysis) {
+            const contentDiv = document.getElementById('actionStepsContent');
             
-            analyzeBtn.innerHTML = '🔄 Analyzing...';
-            analyzeBtn.disabled = true;
-            progressDiv.style.display = 'block';
-            
-            try {
-                // Step 1: Scan OCR folder
-                updateProgress('progress-scan', 'complete', '✅ OCR folder scanned successfully');
-                await new Promise(resolve => setTimeout(resolve, 800));
+            if (analysis.cases.length > 0) {
+                // Get the first case's legal strategy as the primary action plan
+                const primaryStrategy = analysis.cases[0].legal_strategy;
                 
-                // Step 2: Extract clauses
-                updateProgress('progress-extract', 'progress', '🔍 Extracting contract clauses...');
-                await new Promise(resolve => setTimeout(resolve, 1200));
-                updateProgress('progress-extract', 'complete', '✅ 15 legal violations extracted');
-                
-                // Step 3: Match precedents
-                updateProgress('progress-match', 'progress', '⚖️ Matching legal precedents...');
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                updateProgress('progress-match', 'complete', '✅ 4 strong precedents matched');
-                
-                // Step 4: Calculate damages
-                updateProgress('progress-calculate', 'progress', '💰 Calculating financial damages...');
-                await new Promise(resolve => setTimeout(resolve, 800));
-                updateProgress('progress-calculate', 'complete', '✅ Recovery: 45-72 million HUF');
-                
-                // Step 5: Complete
-                updateProgress('progress-complete', 'complete', '✅ Analysis complete - ready for litigation');
-                
-                analysisResults.style.display = 'block';
-                analysisStatus.innerHTML = `
-                    <strong>✅ Comprehensive Analysis Complete!</strong><br>
-                    📄 <strong>116 documents</strong> processed from ocr_output folder<br>
-                    ⚖️ 47 legal violations found and categorized across all documents<br>
-                    📚 4 strong precedents matched (C-630/23, C-186/16, Kúria 10/2025)<br>
-                    💰 Estimated total recovery: 45-72 million HUF<br>
-                    📋 Additional broker liability: 2.9 million HUF<br>
-                    🎯 <strong>Recommendation:</strong> Proceed with litigation citing C-630/23<br>
-                    📊 <strong>Success probability:</strong> 85% with current legal precedents<br>
-                    📁 <strong>Document coverage:</strong> Complete case file analyzed (contracts, statements, correspondence, property docs)
+                contentDiv.innerHTML = `
+                    <div class="case-summary">
+                        <h3>🎯 Your Personalized Action Plan</h3>
+                        <p>Based on analysis of your ${analysis.cases.length} case(s) with total recovery potential of <strong>${formatCurrency(analysis.total_recovery)} HUF</strong></p>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; white-space: pre-wrap; font-family: Georgia, serif; line-height: 1.8;">
+                        ${primaryStrategy}
+                    </div>
                 `;
-                
-                analyzeBtn.innerHTML = '✅ Analysis Complete';
-                analyzeBtn.classList.add('btn-success');
-                
-            } catch (error) {
-                analysisStatus.innerHTML = '❌ Analysis failed. Please check OCR output folder and precedents database.';
-                analyzeBtn.innerHTML = '❌ Analysis Failed';
-                analyzeBtn.classList.add('btn-danger');
-                updateProgress('progress-complete', 'error', '❌ Analysis failed');
             }
         }
 
-        // Financial Calculations - COMPREHENSIVE DAMAGES from ACTION_STEPS
-        function calculateCHFRecovery() {
-            const original = parseFloat(document.getElementById('chf_original').value) || 157055;
-            const payments = parseFloat(document.getElementById('chf_payments').value) || 45000000; // Realistic
-            const startDate = new Date(document.getElementById('chf_start_date').value);
-            const endDate = new Date(document.getElementById('chf_end_date').value);
-            
-            const years = (endDate - startDate) / (1000 * 60 * 60 * 24 * 365.25);
-            
-            // ALL damage categories from ACTION_STEPS document
-            const primaryRestitution = payments;
-            const lostInterest = payments * 0.05 * years; // Compound interest on overpayments (decades)
-            const inflationAdjustment = payments * 0.03 * years; // Purchasing power lost over time
-            const opportunityCost = payments * 0.07 * years; // What overpayments could have earned (5-8% annually)
-            const creditRatingDamages = 1500000; // If loan affected other financial opportunities
-            const psychologicalDamages = 2500000; // Stress, anxiety from unfair treatment (19 years)
-            const brokerLiability = 2900000; // Fees paid for inadequate financial advice
-            const insuranceViolations = 800000; // Penalties from non-compliance with assignment requirements
-            const contractModificationAbuse = 1200000; // Unnecessary fees and charges over 19 years
-            const legalCosts = 1500000; // Accountants, lawyers, appraisers
-            const administrativeCosts = 600000; // Document preparation, translation, travel over 19 years
-            
-            const totalRecovery = primaryRestitution + lostInterest + inflationAdjustment + 
-                                opportunityCost + creditRatingDamages + psychologicalDamages + 
-                                brokerLiability + insuranceViolations + contractModificationAbuse + 
-                                legalCosts + administrativeCosts;
-            
-            // Cap at ACTION_STEPS range
-            const cappedTotal = Math.min(totalRecovery, 50000000);
-            
-            document.getElementById('chfResults').style.display = 'block';
-            document.getElementById('chfBreakdown').innerHTML = `
-                <h4>COMPREHENSIVE CHF RECOVERY (All DAMAGES from ACTION_STEPS):</h4>
-                <p><strong>Primary Restitution:</strong> ${primaryRestitution.toLocaleString()} HUF</p>
-                <p><strong>Lost Interest on Overpayments (${years.toFixed(1)} years):</strong> ${lostInterest.toLocaleString()} HUF</p>
-                <p><strong>Inflation Adjustment Damages:</strong> ${inflationAdjustment.toLocaleString()} HUF</p>
-                <p><strong>Opportunity Cost Damages (investment returns):</strong> ${opportunityCost.toLocaleString()} HUF</p>
-                <p><strong>Credit Rating Damages:</strong> ${creditRatingDamages.toLocaleString()} HUF</p>
-                <p><strong>Psychological/Emotional Damages:</strong> ${psychologicalDamages.toLocaleString()} HUF</p>
-                <p><strong>Broker Liability Damages:</strong> ${brokerLiability.toLocaleString()} HUF</p>
-                <p><strong>Insurance Assignment Violations:</strong> ${insuranceViolations.toLocaleString()} HUF</p>
-                <p><strong>Contract Modification Abuse Costs:</strong> ${contractModificationAbuse.toLocaleString()} HUF</p>
-                <p><strong>Legal and Professional Costs:</strong> ${legalCosts.toLocaleString()} HUF</p>
-                <p><strong>Administrative Costs:</strong> ${administrativeCosts.toLocaleString()} HUF</p>
-                <hr>
-                <p><strong>🎯 TOTAL CHF RECOVERY: ${cappedTotal.toLocaleString()} HUF</strong></p>
-                <p style="color: #27ae60;"><strong>Range: 30-50 million HUF (ACTION_STEPS)</strong></p>
-                <p style="color: #e74c3c;"><strong>Time Period: 2006-2025 (${years.toFixed(1)} years of damages)</strong></p>
-            `;
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('hu-HU').format(Math.round(amount));
         }
 
-        function calculateEURRecovery() {
-            const original = parseFloat(document.getElementById('eur_original').value) || 103847.8;
-            const payments = parseFloat(document.getElementById('eur_payments').value) || 25000000; // More realistic
-            const monthlySpread = parseFloat(document.getElementById('eur_monthly_spread').value) || 35000;
-            const months = parseFloat(document.getElementById('eur_months').value) || 180;
-            const eurYears = 15; // 2010-2025
-            
-            // ALL EUR damage categories from ACTION_STEPS document
-            const spreadRefund = monthlySpread * months; // Exchange rate spread refund (~30-40k HUF/month)
-            const interestRecalculation = payments * 0.15; // Interest recalculation at fair rates (MNB base + reasonable margin)
-            const lostInterest = payments * 0.05 * eurYears; // Lost interest on overpayments since 2010 (15 years)
-            const inflationAdjustment = payments * 0.03 * eurYears; // Cost of living increases over 15 years
-            const opportunityCost = payments * 0.06 * eurYears; // Foregone investment returns
-            const adminBurden = 1000000; // Time and expense dealing with unfair contract
-            const brokerLiability = 1500000; // Broker/insurance violations
-            const psychologicalDamages = 1800000; // 15 years of stress from unfair treatment
-            const legalCosts = 800000; // Legal fees for EUR loan issues
-            const administrativeCosts = 400000; // Administrative burden over 15 years
-            
-            const totalRecovery = spreadRefund + interestRecalculation + lostInterest + 
-                                inflationAdjustment + opportunityCost + adminBurden + 
-                                brokerLiability + psychologicalDamages + legalCosts + administrativeCosts;
-            
-            // Cap at ACTION_STEPS range
-            const cappedTotal = Math.min(totalRecovery, 22000000);
-            
-            document.getElementById('eurResults').style.display = 'block';
-            document.getElementById('eurBreakdown').innerHTML = `
-                <h4>COMPREHENSIVE EUR RECOVERY (All DAMAGES from ACTION_STEPS):</h4>
-                <p><strong>Exchange Rate Spread Refund (~30-40k HUF/month):</strong> ${spreadRefund.toLocaleString()} HUF</p>
-                <p><strong>Interest Recalculation at Fair Rates:</strong> ${interestRecalculation.toLocaleString()} HUF</p>
-                <p><strong>Lost Interest on Overpayments (${eurYears} years):</strong> ${lostInterest.toLocaleString()} HUF</p>
-                <p><strong>Inflation Adjustment (cost of living):</strong> ${inflationAdjustment.toLocaleString()} HUF</p>
-                <p><strong>Opportunity Cost Damages (foregone returns):</strong> ${opportunityCost.toLocaleString()} HUF</p>
-                <p><strong>Administrative Burden Costs:</strong> ${adminBurden.toLocaleString()} HUF</p>
-                <p><strong>Broker/Insurance Liability:</strong> ${brokerLiability.toLocaleString()} HUF</p>
-                <p><strong>Psychological Damages:</strong> ${psychologicalDamages.toLocaleString()} HUF</p>
-                <p><strong>Legal Costs:</strong> ${legalCosts.toLocaleString()} HUF</p>
-                <p><strong>Administrative Costs:</strong> ${administrativeCosts.toLocaleString()} HUF</p>
-                <hr>
-                <p><strong>🎯 TOTAL EUR RECOVERY: ${cappedTotal.toLocaleString()} HUF</strong></p>
-                <p style="color: #27ae60;"><strong>Range: 10-22 million HUF (ACTION_STEPS)</strong></p>
-                <p style="color: #e74c3c;"><strong>Time Period: 2010-2025 (${eurYears} years of damages)</strong></p>
-            `;
+        function showErrorMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'error-message';
+            messageDiv.textContent = message;
+            document.querySelector('.container').insertBefore(messageDiv, document.querySelector('.tabs'));
+            setTimeout(() => messageDiv.remove(), 5000);
         }
 
-        function calculateTotal() {
-            const legal = parseFloat(document.getElementById('legal_costs').value) || 1500000;
-            const professional = parseFloat(document.getElementById('professional_fees').value) || 800000;
-            const admin = parseFloat(document.getElementById('admin_costs').value) || 400000;
-            const emotional = parseFloat(document.getElementById('emotional_damages').value) || 2000000;
-            
-            // Get previous calculations or use estimates
-            const chfRecovery = 45000000; // Mid-range estimate
-            const eurRecovery = 16000000; // Mid-range estimate
-            const additionalDamages = legal + professional + admin + emotional;
-            
-            const grandTotal = chfRecovery + eurRecovery + additionalDamages;
-            
-            document.getElementById('totalResults').style.display = 'block';
-            document.getElementById('totalBreakdown').innerHTML = `
-                <p><strong>CHF Loan Recovery:</strong> ${chfRecovery.toLocaleString()} HUF</p>
-                <p><strong>EUR Loan Recovery:</strong> ${eurRecovery.toLocaleString()} HUF</p>
-                <p><strong>Legal Costs:</strong> ${legal.toLocaleString()} HUF</p>
-                <p><strong>Professional Fees:</strong> ${professional.toLocaleString()} HUF</p>
-                <p><strong>Administrative Costs:</strong> ${admin.toLocaleString()} HUF</p>
-                <p><strong>Emotional Damages:</strong> ${emotional.toLocaleString()} HUF</p>
-                <hr>
-                <h3 style="color: #27ae60;">🎯 COMPREHENSIVE TOTAL RECOVERY: ${grandTotal.toLocaleString()} HUF</h3>
-                <p style="color: #e74c3c; font-weight: bold;">Estimated Settlement Range: 45-75 million HUF</p>
-                <p style="color: #3498db;"><strong>Minimum Acceptable Settlement: ${(grandTotal * 0.7).toLocaleString()} HUF (70%)</strong></p>
-            `;
+        function showSuccessMessage(message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'success-message';
+            messageDiv.textContent = message;
+            document.querySelector('.container').insertBefore(messageDiv, document.querySelector('.tabs'));
+            setTimeout(() => messageDiv.remove(), 5000);
         }
-
-        // Update progress indicators
-        function updateProgress(progressId, status, message) {
-            const progressItem = document.getElementById(progressId);
-            const statusSpan = progressItem.querySelector('.status');
-            
-            // Update status and message
-            const parts = message.split('... ');
-            if (parts.length > 1) {
-                progressItem.childNodes[0].textContent = parts[0] + '... ';
-            } else {
-                progressItem.childNodes[0].textContent = message + ' ';
-            }
-            
-            // Update status badge
-            statusSpan.className = 'status';
-            if (status === 'complete') {
-                statusSpan.className += ' status-success';
-                statusSpan.textContent = '✅ Complete';
-            } else if (status === 'progress') {
-                statusSpan.className += ' status-warning';
-                statusSpan.textContent = '⏳ In Progress';
-            } else if (status === 'error') {
-                statusSpan.className += ' status-error';
-                statusSpan.textContent = '❌ Failed';
-            } else {
-                statusSpan.className += ' status-warning';
-                statusSpan.textContent = '⏳ Pending';
-            }
-        }
-
-        // Refresh precedents database
-        async function refreshPrecedents() {
-            const statusDiv = document.getElementById('precedentsStatus');
-            const statusText = document.getElementById('precedentsStatusText');
-            
-            statusDiv.className = 'alert alert-info';
-            statusText.textContent = 'Refreshing precedents database...';
-            
-            try {
-                // Simulate database refresh
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                statusDiv.className = 'alert alert-success';
-                statusText.innerHTML = '✅ <strong>Precedents Database Refreshed!</strong> Scanned legal_precedents folder for new cases';
-                
-                // Reload precedents
-                loadPrecedents();
-            } catch (error) {
-                statusDiv.className = 'alert alert-error';
-                statusText.textContent = '❌ Failed to refresh precedents database';
-            }
-        }
-
-        // Add precedent file (placeholder)
-        function addPrecedentFile() {
-            alert(`Add Precedent File Feature:\n\n1. Create folder: legal_precedents/\n2. Add case files (.pdf, .md, .txt)\n3. Use format: "C-XXX/XX Case Name (Year)"\n4. Click "Refresh Precedents"\n\nExample files:\n- C-630-23_ZH_KN_v_AxFina.pdf\n- Kuria_10_2025_FX_Decision.md\n- Banking_Act_219A_Commentary.txt`);
-        }
-
-        // Refresh documents
-        function refreshDocuments() {
-            loadDocuments();
-        }
-
-        // View document (placeholder)
-        function viewDocument(filename) {
-            alert(`Opening document: ${filename}\n\nIn the full implementation, this would display the processed document content and highlight found violations.`);
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            loadDocuments();
-            loadPrecedents();
-        });
     </script>
 </body>
 </html>

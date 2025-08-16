@@ -18,38 +18,59 @@
 
 ---
 
-🏛️ **AI-powered legal research assistant for Hungarian foreign-currency mortgage litigation**
+## 🤖 **NEW: AI-Powered Case-Agnostic System**
 
-A comprehensive Rust-based system designed to analyze foreign currency mortgage contracts, extract violation clauses, match legal precedents, and calculate financial damages for litigation against Hungarian banks.
+🏛️ **Intelligent legal research assistant for ANY Hungarian foreign-currency mortgage case**
 
-## 🎯 Key Features
+This system has been completely transformed from a hardcoded demo into a **production-ready, AI-powered legal research assistant** that can intelligently analyze ANY Hungarian FX mortgage case - regardless of bank, currency, or loan type.
 
-- **🔍 Document Analysis**: OCR processing of contracts, correspondence, and legal documents via Mistral AI
-- **⚖️ Legal Clause Extraction**: Identify 9 types of violations (FX risk, broker liability, insurance breaches)
-- **📚 Precedent Matching**: Match against CJEU, Hungarian Kúria, and Polish Supreme Court cases
-- **💰 Financial Calculator**: Comprehensive damage calculations including broker liability and lost opportunity costs  
-- **📄 Legal Document Generation**: Auto-draft complaints, settlement demands, and evidence summaries
-- **🌐 Bilingual Support**: Complete Hungarian and English language processing and output
-- **🔒 Privacy-First**: Local deployment with SQLite + Chroma vector database, no cloud dependencies
+## ✨ NEW AI-Powered Features
+
+### 🧠 Intelligent Case Analysis
+- **Universal Bank Support**: Works with ANY Hungarian bank (Erste, Aegon, OTP, K&H, CIB, Raiffeisen, UniCredit, etc.)
+- **Multi-Currency Handling**: Analyzes CHF, EUR, USD, JPY, GBP, HUF loans automatically
+- **Dynamic Document Processing**: AI understands any contract format or structure
+- **Multi-Case Support**: Handles bank switching and multiple concurrent loans
+
+### 🤖 AI-Driven Capabilities
+- **Mistral AI Integration**: Advanced document understanding and legal analysis
+- **Dynamic Damage Calculation**: AI calculates damages based on YOUR specific case facts
+- **Personalized Legal Documents**: AI generates case-specific complaints and submissions
+- **Real-Time File Monitoring**: Automatic reanalysis when new documents are added
+- **User Override System**: Correct any AI misinterpretations with easy interface
+
+## 🎯 Core Features
+
+- **🔍 Document Analysis**: OCR processing of ANY mortgage documents via Mistral AI
+- **⚖️ Legal Clause Extraction**: AI identifies violations specific to YOUR contracts
+- **📚 Precedent Matching**: Intelligent matching against CJEU and Hungarian court cases
+- **💰 Financial Calculator**: Case-specific damage calculations (no hardcoded values!)
+- **📄 Legal Document Generation**: Personalized complaints, PBT submissions, lawyer letters
+- **🌐 Bilingual Support**: Complete Hungarian and English language processing
+- **🔒 Privacy-First**: Local deployment, your documents never leave your machine
 
 ## 🏗️ System Architecture
 
 ```
 Hungarian FX Mortgage Legal Research System
-├── 🦀 Rust Backend (Legal Analysis Engine)
+├── 🤖 AI Analysis Engine (NEW)
+│   ├── src/ai/           # AI-powered analysis
+│   │   ├── mistral_client.rs  # Mistral AI integration
+│   │   ├── case_analyzer.rs   # Intelligent case analysis
+│   │   └── file_watcher.rs    # Real-time file monitoring
+│   └── src/api/case_analysis.rs # Dynamic API endpoints
+├── 🦀 Rust Backend
 │   ├── src/api/          # REST API endpoints
 │   ├── src/extractors/   # Contract clause extraction
 │   ├── src/matching/     # Legal precedent matching
-│   ├── src/models/       # Data structures
-│   └── src/db/           # Database operations
+│   └── src/models/       # Data structures
 ├── 🐍 Python OCR Processor
 │   ├── mistral_client.py # Mistral AI integration
-│   ├── main.py          # Document processing pipeline
-│   └── fallback_ocr.py  # Tesseract backup
+│   └── main.py          # Document processing pipeline
 ├── 📊 Local Databases
 │   ├── SQLite           # Case metadata and analysis
 │   └── Chroma           # Vector similarity search
-└── 🌐 Web Interface     # http://localhost:8080
+└── 🌐 Dynamic Web Interface # AI-powered UI
 ```
 
 ## 💾 Database Schema
@@ -72,49 +93,52 @@ Hungarian FX Mortgage Legal Research System
 
 ## 🚀 Quick Start
 
-### 📖 **[Complete Setup Guide → SETUP.md](./SETUP.md)**
-
-**5-Minute Installation:**
+### 🤖 **AI-Powered System (NEW)**
 
 ```bash
 # 1. Clone repository
 git clone https://github.com/bencium/devizahitel-copilot.git
 cd devizahitel-copilot
 
-# 2. Configure Mistral API
+# 2. Configure Mistral API (REQUIRED for AI features)
 cp .env.example .env
-echo "MISTRAL_API_KEY=your_mistral_api_key_here" >> .env
+# Edit .env and add your Mistral API key
 
-# 3. Build and run
-cargo build --release
-cargo run --bin devizahitel_legal_research
+# 3. Start the AI-powered system
+./start_ai.sh
 
 # 4. Open http://localhost:8080 
-# ✅ Working server with health check endpoint
+# ✅ AI-powered interface ready for ANY case!
 ```
+
+### 📖 **[Complete Setup Guide → SETUP.md](./SETUP.md)**
 
 **For detailed instructions, troubleshooting, and advanced configuration, see [SETUP.md](./SETUP.md)**
 
-## 🎯 How It Works
+## 🎯 How It Works - AI Workflow
 
-### 1. Document Processing
+### 1. Add Your Documents
 ```bash
-# Process contracts with Mistral OCR
-cd mistral_ocr_processor
-python3 main.py --input-dir contracts/ --output-dir ocr_output/
+# Place your documents in the OCR output folder
+cp your_contracts/*.pdf ocr_output/
+# System automatically detects new files!
 ```
 
-### 2. Legal Analysis
-- 🔍 **Contract Analysis**: Automatically extracts FX risk violations, broker liability issues
-- ⚖️ **Precedent Matching**: Finds relevant CJEU and Hungarian court cases  
-- 💰 **Damage Calculator**: Calculates comprehensive financial damages
-- 📄 **Document Generation**: Creates legal complaints and settlement demands
-
-### 3. Web Interface
+### 2. AI Analysis Process
 1. **Open**: `http://localhost:8080`
-2. **Upload**: Contract PDFs, images, Word documents
-3. **Analyze**: Automatic clause extraction and precedent matching
-4. **Download**: Complete legal package (Hungarian/English)
+2. **Click**: "Analyze Case with AI" button
+3. **AI Processing**:
+   - 🤖 Identifies ALL banks and currencies in your case
+   - 📄 Extracts loan amounts, dates, payment history
+   - 💰 Calculates personalized damage amounts
+   - ⚖️ Matches relevant legal precedents
+4. **Review & Correct**: Override any AI misinterpretations
+5. **Generate**: Download personalized legal documents
+
+### 3. User Override System
+- **Problem**: AI extracted wrong amount?
+- **Solution**: Use Corrections tab to fix it
+- **Result**: System immediately recalculates everything!
 
 ### 4. API Integration
 ```bash

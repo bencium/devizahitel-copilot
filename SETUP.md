@@ -1,14 +1,20 @@
 # Hungarian FX Mortgage Legal Research System - Setup Guide
 
-🏛️ **Complete installation guide for the AI-powered legal research assistant**
+🏛️ **Complete installation guide for the AI-powered, case-agnostic legal research assistant**
 
 ---
 
-## 🎯 System Overview
+## 🤖 NEW: AI-Powered System
 
-This system helps lawyers and bank victims analyze foreign currency mortgage contracts, extract violation clauses, match legal precedents, and calculate financial damages for litigation.
+This system has been completely transformed into an **AI-powered, case-agnostic legal research assistant** that can analyze ANY Hungarian FX mortgage case automatically:
 
-**Technology Stack**: Rust backend, Python OCR processor, Mistral AI, local SQLite + Chroma vector database
+- ✅ **Works with ANY bank** (Erste, Aegon, OTP, K&H, CIB, etc.)
+- ✅ **Handles ANY currency** (CHF, EUR, USD, JPY, GBP, HUF)
+- ✅ **Analyzes multiple loans** (bank switching, concurrent loans)
+- ✅ **AI-powered analysis** (no hardcoded values!)
+- ✅ **User override system** (correct AI misinterpretations)
+
+**Technology Stack**: Rust backend with AI engine, Mistral AI integration, Python OCR processor, SQLite database
 
 ---
 
@@ -28,7 +34,7 @@ This system helps lawyers and bank victims analyze foreign currency mortgage con
 
 ---
 
-## 🚀 Quick Start (5 Minutes)
+## 🚀 Quick Start - AI System (5 Minutes)
 
 ### 1. Clone Repository
 ```bash
@@ -36,49 +42,45 @@ git clone https://github.com/bencium/devizahitel-copilot.git
 cd devizahitel-copilot
 ```
 
-### 2. Setup Environment Variables
+### 2. Setup Mistral AI (REQUIRED)
 ```bash
-# Copy environment template
-cp .env.example .env
+# The .env file already exists with the API key configured
+# Verify it contains your Mistral API key:
+cat .env | grep MISTRAL_API_KEY
 
-# Edit .env with your Mistral API key
-echo "MISTRAL_API_KEY=your_mistral_api_key_here" >> .env
-echo "DATABASE_URL=sqlite://legal_research.db" >> .env
-echo "RUST_LOG=info" >> .env
+# If not set, edit .env and add your key:
+# MISTRAL_API_KEY=your_actual_key_here
 ```
 
-### 3. Install Rust Dependencies
+### 3. Build the AI System
 ```bash
-cargo build --release
+# Build the AI-powered version
+cargo build --bin devizahitel_legal_research_ai
 ```
 
-### 4. Setup Python OCR Processor
+### 4. Start the AI System
 ```bash
-cd mistral_ocr_processor
-cp .env.example .env
-echo "MISTRAL_API_KEY=your_mistral_api_key_here" >> .env
+# Use the AI launcher script
+./start_ai.sh
 
-# Install Python dependencies
-pip install -r requirements.txt
-cd ..
-```
-
-### 5. Initialize Database
-```bash
-# Run database migrations
-cargo run --bin setup_databases
-
-# Optional: Populate with legal precedents
-cargo run --bin populate_precedents
-```
-
-### 6. Start the System
-```bash
-# Start the legal research server
-cargo run
+# Or run directly:
+cargo run --bin devizahitel_legal_research_ai
 
 # Server will be available at http://localhost:8080
 ```
+
+### 5. Add Your Documents
+```bash
+# Place your FX mortgage documents in the OCR output folder
+cp your_documents/*.pdf ocr_output/
+# System will automatically detect and process them!
+```
+
+### 6. Analyze Your Case
+1. Open http://localhost:8080
+2. Click "Analyze Case with AI"
+3. Review results and apply corrections if needed
+4. Generate personalized legal documents
 
 ---
 
