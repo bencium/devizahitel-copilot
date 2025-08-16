@@ -123,9 +123,10 @@ Clients/
 _emails/
 ocr_output/
 
-# ALL MARKDOWN FILES EXCEPT README.md
+# ALL MARKDOWN FILES EXCEPT README.md AND SEC FOLDER
 *.md
 *.MD
 
-# Allow ONLY README.md - all other md files excluded for privacy
+# Allow specific public documentation
 !README.md
+!SEC/*.md
