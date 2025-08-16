@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Research System - Foreign Currency Mortgage Analysis</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f7fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .upload-zone {
+            border: 3px dashed #bdc3c7;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .upload-zone:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+        
+        .upload-zone.dragover {
+            border-color: #e74c3c;
+            background: #fff5f5;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        .results-area {
+            grid-column: 1 / -1;
+            min-height: 400px;
+        }
+        
+        .precedent-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .precedent-item {
+            padding: 20px;
+            border: 1px solid #ecf0f1;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .precedent-item:hover {
+            border-color: #3498db;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.1);
+        }
+        
+        .precedent-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        
+        .precedent-details {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .precedent-ruling {
+            color: #27ae60;
+            font-style: italic;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #ecf0f1;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px 20px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .tab.active {
+            background: #3498db;
+            color: white;
+            border-radius: 6px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .success {
+            background: #27ae60;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .clause-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .clause-item.high-risk {
+            border-left-color: #e74c3c;
+        }
+        
+        .clause-item.critical {
+            border-left-color: #c0392b;
+            background: #fdf2f2;
+        }
+        
+        .clause-type {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            font-size: 0.8em;
+        }
+        
+        .clause-text {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .clause-confidence {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Legal Research System</h1>
+            <p>Analyze foreign currency mortgage contracts and find relevant legal precedents</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Document Upload Section -->
+            <div class="card">
+                <h2>Upload Document</h2>
+                <div class="upload-zone" id="uploadZone">
+                    <p>Drag and drop your document here or click to browse</p>
+                    <p style="margin-top: 10px; font-size: 0.9em; color: #7f8c8d;">
+                        Supported: PDF, Word, Images (JPEG, PNG), Text files
+                    </p>
+                </div>
+                <input type="file" id="fileInput" class="file-input" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png">
+                
+                <div class="form-group">
+                    <label for="documentType">Document Type</label>
+                    <select id="documentType">
+                        <option value="mortgage_contract">Mortgage Contract</option>
+                        <option value="loan_agreement">Loan Agreement</option>
+                        <option value="correspondence">Correspondence</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="clientId">Client ID (Optional)</label>
+                    <input type="text" id="clientId" placeholder="Enter client identifier">
+                </div>
+                
+                <div class="form-group">
+                    <label for="caseReference">Case Reference (Optional)</label>
+                    <input type="text" id="caseReference" placeholder="Enter case reference">
+                </div>
+                
+                <button class="btn" onclick="uploadDocument()">Upload & Analyze</button>
+            </div>
+
+            <!-- Legal Precedents Section -->
+            <div class="card">
+                <h2>Recent Legal Precedents</h2>
+                <div class="precedent-list" id="precedentList">
+                    <div class="loading">Loading precedents...</div>
+                </div>
+                <button class="btn btn-secondary" onclick="loadPrecedents()">Refresh Precedents</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="card results-area">
+            <h2>Analysis Results</h2>
+            
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('overview')">Overview</button>
+                <button class="tab" onclick="showTab('clauses')">Extracted Clauses</button>
+                <button class="tab" onclick="showTab('matches')">Precedent Matches</button>
+                <button class="tab" onclick="showTab('draft')">Draft Pleading</button>
+            </div>
+            
+            <div id="overview" class="tab-content active">
+                <div id="overviewContent">
+                    <p style="color: #7f8c8d; text-align: center; padding: 40px;">
+                        Upload a document to begin analysis
+                    </p>
+                </div>
+            </div>
+            
+            <div id="clauses" class="tab-content">
+                <div id="clausesContent">
+                    <p style="color: #7f8c8d; text-align: center; padding: 40px;">
+                        No clauses extracted yet
+                    </p>
+                </div>
+            </div>
+            
+            <div id="matches" class="tab-content">
+                <div id="matchesContent">
+                    <p style="color: #7f8c8d; text-align: center; padding: 40px;">
+                        No precedent matches found yet
+                    </p>
+                </div>
+            </div>
+            
+            <div id="draft" class="tab-content">
+                <div id="draftContent">
+                    <p style="color: #7f8c8d; text-align: center; padding: 40px;">
+                        No draft pleading generated yet
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentDocumentId = null;
+        
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            setupUploadZone();
+            loadPrecedents();
+        });
+        
+        // Setup drag and drop upload zone
+        function setupUploadZone() {
+            const uploadZone = document.getElementById('uploadZone');
+            const fileInput = document.getElementById('fileInput');
+            
+            uploadZone.addEventListener('click', () => fileInput.click());
+            
+            uploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadZone.classList.add('dragover');
+            });
+            
+            uploadZone.addEventListener('dragleave', () => {
+                uploadZone.classList.remove('dragover');
+            });
+            
+            uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadZone.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    fileInput.files = files;
+                }
+            });
+            
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    const fileName = e.target.files[0].name;
+                    uploadZone.innerHTML = `<p>Selected: ${fileName}</p><p style="margin-top: 10px; font-size: 0.9em; color: #27ae60;">Ready to upload</p>`;
+                }
+            });
+        }
+        
+        // Upload and analyze document
+        async function uploadDocument() {
+            const fileInput = document.getElementById('fileInput');
+            const documentType = document.getElementById('documentType').value;
+            const clientId = document.getElementById('clientId').value;
+            const caseReference = document.getElementById('caseReference').value;
+            
+            if (!fileInput.files.length) {
+                showError('Please select a file to upload');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            showLoading('Uploading and analyzing document...');
+            
+            try {
+                // Convert file to base64
+                const base64Data = await fileToBase64(file);
+                
+                const uploadData = {
+                    filename: file.name,
+                    content_type: file.type,
+                    file_data: base64Data,
+                    document_type: documentType,
+                    client_id: clientId || null,
+                    case_reference: caseReference || null
+                };
+                
+                const response = await fetch('/api/documents', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(uploadData)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    currentDocumentId = result.document_id;
+                    showSuccess('Document uploaded and analyzed successfully!');
+                    displayAnalysisResults(result);
+                    
+                    // Clear the form
+                    fileInput.value = '';
+                    document.getElementById('uploadZone').innerHTML = `
+                        <p>Drag and drop your document here or click to browse</p>
+                        <p style="margin-top: 10px; font-size: 0.9em; color: #7f8c8d;">
+                            Supported: PDF, Word, Images (JPEG, PNG), Text files
+                        </p>
+                    `;
+                } else {
+                    const error = await response.json();
+                    showError(`Upload failed: ${error.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                showError(`Upload failed: ${error.message}`);
+            }
+        }
+        
+        // Convert file to base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+        
+        // Load legal precedents
+        async function loadPrecedents() {
+            const precedentList = document.getElementById('precedentList');
+            precedentList.innerHTML = '<div class="loading"><div class="spinner"></div>Loading precedents...</div>';
+            
+            try {
+                const response = await fetch('/api/cases?fx_only=true&limit=10');
+                if (response.ok) {
+                    const data = await response.json();
+                    displayPrecedents(data.cases || []);
+                } else {
+                    precedentList.innerHTML = '<p style="color: #e74c3c; text-align: center;">Failed to load precedents</p>';
+                }
+            } catch (error) {
+                precedentList.innerHTML = '<p style="color: #e74c3c; text-align: center;">Error loading precedents</p>';
+            }
+        }
+        
+        // Display precedents
+        function displayPrecedents(precedents) {
+            const precedentList = document.getElementById('precedentList');
+            
+            if (precedents.length === 0) {
+                precedentList.innerHTML = '<p style="color: #7f8c8d; text-align: center;">No precedents found</p>';
+                return;
+            }
+            
+            const html = precedents.map(precedent => `
+                <div class="precedent-item">
+                    <div class="precedent-title">${precedent.case_number} - ${precedent.case_name}</div>
+                    <div class="precedent-details">${precedent.country} | ${new Date(precedent.date).getFullYear()} | ${precedent.currency}</div>
+                    <div class="precedent-ruling">${precedent.key_ruling}</div>
+                </div>
+            `).join('');
+            
+            precedentList.innerHTML = html;
+        }
+        
+        // Display analysis results
+        function displayAnalysisResults(result) {
+            // Overview tab
+            const overviewHtml = `
+                <div class="success">Document processed successfully!</div>
+                <p><strong>Document ID:</strong> ${result.document_id}</p>
+                <p><strong>Language Detected:</strong> ${result.language_detected}</p>
+                <p><strong>Confidence Score:</strong> ${(result.confidence_score * 100).toFixed(1)}%</p>
+                <p><strong>Clauses Extracted:</strong> ${result.extracted_clauses.length}</p>
+                <div style="margin-top: 20px;">
+                    <h3>Next Steps:</h3>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Review extracted clauses in the "Extracted Clauses" tab</li>
+                        <li>Check precedent matches in the "Precedent Matches" tab</li>
+                        <li>Generate a draft pleading in the "Draft Pleading" tab</li>
+                    </ul>
+                </div>
+            `;
+            document.getElementById('overviewContent').innerHTML = overviewHtml;
+            
+            // Clauses tab
+            displayExtractedClauses(result.extracted_clauses);
+            
+            // Load precedent matches
+            loadPrecedentMatches(result.document_id);
+        }
+        
+        // Display extracted clauses
+        function displayExtractedClauses(clauses) {
+            const clausesContent = document.getElementById('clausesContent');
+            
+            if (clauses.length === 0) {
+                clausesContent.innerHTML = '<p style="color: #7f8c8d; text-align: center; padding: 40px;">No clauses extracted</p>';
+                return;
+            }
+            
+            const html = clauses.map(clause => `
+                <div class="clause-item ${clause.risk_level}">
+                    <div class="clause-type">${clause.clause_type.replace('_', ' ')}</div>
+                    <div class="clause-text">${clause.clause_text}</div>
+                    <div class="clause-confidence">
+                        Confidence: ${(clause.confidence_score * 100).toFixed(1)}% | 
+                        Risk Level: ${clause.risk_level}
+                    </div>
+                </div>
+            `).join('');
+            
+            clausesContent.innerHTML = html;
+        }
+        
+        // Load precedent matches
+        async function loadPrecedentMatches(documentId) {
+            const matchesContent = document.getElementById('matchesContent');
+            matchesContent.innerHTML = '<div class="loading"><div class="spinner"></div>Finding precedent matches...</div>';
+            
+            try {
+                const response = await fetch('/api/research/match-precedents', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ document_id: documentId })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    displayPrecedentMatches(result);
+                } else {
+                    matchesContent.innerHTML = '<p style="color: #e74c3c; text-align: center;">Failed to find precedent matches</p>';
+                }
+            } catch (error) {
+                matchesContent.innerHTML = '<p style="color: #e74c3c; text-align: center;">Error finding precedent matches</p>';
+            }
+        }
+        
+        // Display precedent matches
+        function displayPrecedentMatches(matches) {
+            const matchesContent = document.getElementById('matchesContent');
+            
+            if (!matches.overall_case_matches || matches.overall_case_matches.length === 0) {
+                matchesContent.innerHTML = '<p style="color: #7f8c8d; text-align: center; padding: 40px;">No relevant precedents found</p>';
+                return;
+            }
+            
+            const html = `
+                <div class="success">Found ${matches.overall_case_matches.length} relevant precedents</div>
+                ${matches.overall_case_matches.map(match => `
+                    <div class="precedent-item">
+                        <div class="precedent-title">${match.case.case_number} - ${match.case.case_name}</div>
+                        <div class="precedent-details">
+                            ${match.case.country} | ${new Date(match.case.date).getFullYear()} | 
+                            Similarity: ${(match.similarity_score * 100).toFixed(1)}%
+                        </div>
+                        <div class="precedent-ruling">${match.case.key_ruling}</div>
+                        <div style="margin-top: 10px; font-size: 0.9em; color: #7f8c8d;">
+                            ${match.relevance_explanation}
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+            
+            matchesContent.innerHTML = html;
+        }
+        
+        // Show tab content
+        function showTab(tabName) {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            // Special handling for draft tab
+            if (tabName === 'draft' && currentDocumentId) {
+                generateDraftPleading(currentDocumentId);
+            }
+        }
+        
+        // Generate draft pleading
+        async function generateDraftPleading(documentId) {
+            const draftContent = document.getElementById('draftContent');
+            draftContent.innerHTML = '<div class="loading"><div class="spinner"></div>Generating draft pleading...</div>';
+            
+            try {
+                const response = await fetch('/api/research/generate-draft', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        document_id: documentId,
+                        pleading_type: 'complaint',
+                        court: 'District Court',
+                        style_preference: 'formal'
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    displayDraftPleading(result);
+                } else {
+                    draftContent.innerHTML = '<p style="color: #e74c3c; text-align: center;">Failed to generate draft pleading</p>';
+                }
+            } catch (error) {
+                draftContent.innerHTML = '<p style="color: #e74c3c; text-align: center;">Error generating draft pleading</p>';
+            }
+        }
+        
+        // Display draft pleading
+        function displayDraftPleading(draft) {
+            const draftContent = document.getElementById('draftContent');
+            
+            const html = `
+                <div class="success">Draft pleading generated successfully!</div>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 6px; margin-top: 20px;">
+                    <h3>${draft.title}</h3>
+                    <div style="white-space: pre-line; line-height: 1.6; margin-top: 15px;">
+                        ${draft.content}
+                    </div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <button class="btn" onclick="downloadDraft()">Download Draft</button>
+                    <button class="btn btn-secondary" onclick="copyDraft()" style="margin-left: 10px;">Copy to Clipboard</button>
+                </div>
+            `;
+            
+            draftContent.innerHTML = html;
+        }
+        
+        // Utility functions
+        function showLoading(message) {
+            showMessage(message, 'loading');
+        }
+        
+        function showError(message) {
+            showMessage(message, 'error');
+        }
+        
+        function showSuccess(message) {
+            showMessage(message, 'success');
+        }
+        
+        function showMessage(message, type) {
+            const existingMessage = document.querySelector('.message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            if (type === 'loading') {
+                messageDiv.innerHTML = `<div class="spinner"></div>${message}`;
+            } else {
+                messageDiv.textContent = message;
+            }
+            
+            document.querySelector('.container').insertBefore(messageDiv, document.querySelector('.main-content'));
+            
+            if (type !== 'loading') {
+                setTimeout(() => messageDiv.remove(), 5000);
+            }
+        }
+        
+        function downloadDraft() {
+            const draftText = document.querySelector('#draftContent div[style*="white-space: pre-line"]').textContent;
+            const blob = new Blob([draftText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'legal_draft_pleading.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        function copyDraft() {
+            const draftText = document.querySelector('#draftContent div[style*="white-space: pre-line"]').textContent;
+            navigator.clipboard.writeText(draftText).then(() => {
+                showSuccess('Draft copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>

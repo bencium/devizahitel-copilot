@@ -1,0 +1,151 @@
+# Private Legal Documents and Data
+# DO NOT COMMIT SENSITIVE CLIENT FILES
+
+# Document folders
+documents_to_process/
+feldolgozando_dokumentumok/
+ocr_output/
+ocr_kimenet/
+client_files/
+legal_documents/
+
+# Specific file types that might contain sensitive data
+*.pdf
+*.PDF
+*.doc
+*.docx
+*.DOC
+*.DOCX
+
+# Image files that might be scanned documents
+*.jpg
+*.jpeg
+*.png
+*.PNG
+*.JPG
+*.JPEG
+*.heic
+*.HEIC
+*.tiff
+*.TIFF
+
+# Email exports and correspondence
+*_emails/
+emails/
+correspondence/
+
+# Bank statements and financial data
+*bank*.csv
+*bank*.xlsx
+*payment*.csv
+*payment*.xlsx
+*statement*.pdf
+*kimutat*.pdf
+
+# Legal analysis files with client data
+*client*.md
+*matter*.md
+*case*.md
+*ugy*.md
+
+# OCR output files
+*_ocr.txt
+*_ocr.md
+
+# Database files with case data
+*.db
+*.sqlite
+*.sqlite3
+cases.db
+clients.db
+
+# Vector database storage
+chroma_db/
+vector_storage/
+embeddings/
+
+# Backup and temporary files
+*.bak
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+
+# Log files that might contain sensitive information
+*.log
+processing.log
+case_log.txt
+
+# Configuration files with API keys or sensitive settings
+.env
+.env.local
+config.json
+secrets.json
+
+# Application specific
+target/
+dist/
+build/
+node_modules/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# Rust
+/target/
+Cargo.lock
+
+# Archive files that might contain sensitive documents
+*.zip
+*.rar
+*.7z
+*.tar.gz
+*.tar
+
+# Specific sensitive folders mentioned in context
+Precedents/sensitive/
+Cases/active/
+Clients/
+_emails/
+ocr_output/
+
+# Any markdown files that might contain client analysis
+*analysis*.md
+*evidence*.md
+*claim*.md
+*legal*.md
+
+# Specific files with personal/case information
+fx_risk_evidence_extraction.md
+limitation_periods_analysis.md
+claude.md
+CLAUDE.md
+IMPLEMENTATION_SUMMARY.md
+
+# Exclude specific files but allow templates
+!template*.md
+!example*.md
+!sample*.md
+
+# Allow public documentation
+!README.md
+!GUIDE.md
+!INSTALL.md
+!PRD.md
+!CLAUDE.md
+!OCR_USER_GUIDE.md
+!ACTION_STEPS_FOR_BANK_VICTIM.md
