@@ -2,6 +2,22 @@
 
 **System architected, designed, programmed & ideated by [https://www.bencium.io/](https://www.bencium.io/)**
 
+## ⚠️ **IMPORTANT LEGAL DISCLAIMER**
+
+**🚨 THIS SOFTWARE IS NOT FINANCIAL OR LEGAL ADVICE 🚨**
+
+**By using this open-source software, you acknowledge and agree:**
+- This system provides research assistance only, not professional legal or financial advice
+- You use this software entirely at your own risk and responsibility  
+- Bencium and contributors are NOT LIABLE for any damages, losses, or legal consequences
+- All generated documents must be reviewed by qualified legal professionals before use
+- This software does not guarantee legal outcomes or financial recovery
+- You assume full responsibility for any legal actions based on this system's output
+
+**⚖️ Professional Review Required:** Generated legal documents should always be reviewed by qualified legal professionals before use in actual legal proceedings.
+
+---
+
 🏛️ **AI-powered legal research assistant for Hungarian foreign-currency mortgage litigation**
 
 A comprehensive Rust-based system designed to analyze foreign currency mortgage contracts, extract violation clauses, match legal precedents, and calculate financial damages for litigation against Hungarian banks.
