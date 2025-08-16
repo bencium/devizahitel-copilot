@@ -1,8 +1,8 @@
-use sqlx::{PgPool, Result};
+use sqlx::{SqlitePool, Result};
 use uuid::Uuid;
 use crate::models::{ExtractedClause, ClausePattern};
 
-pub async fn insert_extracted_clause(pool: &PgPool, clause: ExtractedClause) -> Result<ExtractedClause> {
+pub async fn insert_extracted_clause(pool: &SqlitePool, clause: ExtractedClause) -> Result<ExtractedClause> {
     let row = sqlx::query!(
         r#"
         INSERT INTO extracted_clauses (
@@ -43,7 +43,7 @@ pub async fn insert_extracted_clause(pool: &PgPool, clause: ExtractedClause) -> 
     })
 }
 
-pub async fn get_clauses_by_document(pool: &PgPool, document_id: Uuid) -> Result<Vec<ExtractedClause>> {
+pub async fn get_clauses_by_document(pool: &SqlitePool, document_id: Uuid) -> Result<Vec<ExtractedClause>> {
     let rows = sqlx::query!(
         "SELECT * FROM extracted_clauses WHERE document_id = $1 ORDER BY start_position",
         document_id
@@ -66,7 +66,7 @@ pub async fn get_clauses_by_document(pool: &PgPool, document_id: Uuid) -> Result
     }).collect())
 }
 
-pub async fn get_clauses_by_type(pool: &PgPool, clause_type: &str) -> Result<Vec<ExtractedClause>> {
+pub async fn get_clauses_by_type(pool: &SqlitePool, clause_type: &str) -> Result<Vec<ExtractedClause>> {
     let rows = sqlx::query!(
         "SELECT * FROM extracted_clauses WHERE clause_type = $1 ORDER BY confidence_score DESC",
         clause_type
@@ -89,7 +89,7 @@ pub async fn get_clauses_by_type(pool: &PgPool, clause_type: &str) -> Result<Vec
     }).collect())
 }
 
-pub async fn get_high_risk_clauses(pool: &PgPool) -> Result<Vec<ExtractedClause>> {
+pub async fn get_high_risk_clauses(pool: &SqlitePool) -> Result<Vec<ExtractedClause>> {
     let rows = sqlx::query!(
         "SELECT * FROM extracted_clauses WHERE risk_level IN ('high', 'critical') ORDER BY confidence_score DESC"
     )
@@ -111,7 +111,7 @@ pub async fn get_high_risk_clauses(pool: &PgPool) -> Result<Vec<ExtractedClause>
     }).collect())
 }
 
-pub async fn insert_clause_pattern(pool: &PgPool, pattern: ClausePattern) -> Result<ClausePattern> {
+pub async fn insert_clause_pattern(pool: &SqlitePool, pattern: ClausePattern) -> Result<ClausePattern> {
     let row = sqlx::query!(
         r#"
         INSERT INTO clause_patterns (
@@ -153,7 +153,7 @@ pub async fn insert_clause_pattern(pool: &PgPool, pattern: ClausePattern) -> Res
     })
 }
 
-pub async fn get_active_patterns(pool: &PgPool) -> Result<Vec<ClausePattern>> {
+pub async fn get_active_patterns(pool: &SqlitePool) -> Result<Vec<ClausePattern>> {
     let rows = sqlx::query!(
         "SELECT * FROM clause_patterns WHERE is_active = true ORDER BY clause_category, severity DESC"
     )
@@ -176,12 +176,12 @@ pub async fn get_active_patterns(pool: &PgPool) -> Result<Vec<ClausePattern>> {
     }).collect())
 }
 
-pub async fn search_clauses(pool: &PgPool, search_term: &str) -> Result<Vec<ExtractedClause>> {
+pub async fn search_clauses(pool: &SqlitePool, search_term: &str) -> Result<Vec<ExtractedClause>> {
     let rows = sqlx::query!(
         r#"
         SELECT * FROM extracted_clauses 
-        WHERE clause_text ILIKE $1 
-           OR english_translation ILIKE $1
+        WHERE clause_text LIKE $1 
+           OR english_translation LIKE $1
         ORDER BY confidence_score DESC
         LIMIT 100
         "#,
@@ -205,7 +205,7 @@ pub async fn search_clauses(pool: &PgPool, search_term: &str) -> Result<Vec<Extr
     }).collect())
 }
 
-pub async fn update_clause_translation(pool: &PgPool, clause_id: Uuid, translation: &str) -> Result<()> {
+pub async fn update_clause_translation(pool: &SqlitePool, clause_id: Uuid, translation: &str) -> Result<()> {
     sqlx::query!(
         "UPDATE extracted_clauses SET english_translation = $1 WHERE id = $2",
         translation,
@@ -217,7 +217,7 @@ pub async fn update_clause_translation(pool: &PgPool, clause_id: Uuid, translati
     Ok(())
 }
 
-pub async fn get_clause_statistics(pool: &PgPool) -> Result<ClauseStatistics> {
+pub async fn get_clause_statistics(pool: &SqlitePool) -> Result<ClauseStatistics> {
     let stats = sqlx::query!(
         r#"
         SELECT 

@@ -355,7 +355,7 @@ impl ClauseExtractor {
     }
 
     fn calculate_fx_confidence(&self, context: &str) -> f32 {
-        let mut confidence = 0.5;
+        let mut confidence: f32 = 0.5;
         
         // Boost confidence for specific FX terms
         if context.to_lowercase().contains("chf") || 
@@ -385,7 +385,7 @@ impl ClauseExtractor {
     }
 
     fn calculate_transparency_confidence(&self, context: &str) -> f32 {
-        let mut confidence = 0.4;
+        let mut confidence: f32 = 0.4;
         
         // Look for transparency indicators
         let transparency_terms = [

@@ -17,7 +17,8 @@ This system helps lawyers and bank victims analyze foreign currency mortgage con
 ### Required Software
 1. **Rust** (latest stable) - [Install from rustup.rs](https://rustup.rs/)
 2. **Python 3.8+** - [Download from python.org](https://python.org)
-3. **Git** - For cloning the repository
+3. **Node.js 18+** - [Download from nodejs.org](https://nodejs.org) - **Required for local server**
+4. **Git** - For cloning the repository
 
 ### Required API Access
 1. **Mistral API Key** - [Get from platform.mistral.ai](https://platform.mistral.ai)
@@ -317,6 +318,49 @@ cargo build --release
 rustc --version
 ```
 
+#### **CRITICAL: Database Configuration Errors**
+If you see errors like "no database driver found matching URL scheme 'sqlite'":
+
+```bash
+# 1. Check Cargo.toml has correct SQLite feature:
+grep -n "sqlite" Cargo.toml
+# Should show: sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "sqlite", ...
+
+# 2. Ensure database exists:
+ls -la legal_research.db
+
+# 3. If missing, create with schema:
+sqlite3 legal_research.db < migrations/001_initial_schema_sqlite.sql
+
+# 4. For PostgreSQL-related errors, verify all instances changed:
+grep -r "PgPool" src/   # Should return no results
+grep -r "Postgres" src/ # Should return no results
+```
+
+#### **Type Compilation Errors**
+For `.clamp()` method ambiguity errors:
+```bash
+# Find and fix type annotations:
+grep -r "let mut.*= 0\." src/
+# Add explicit f32 types: let mut variable: f32 = 0.0;
+```
+
+#### **SQLite Syntax Errors**
+For PostgreSQL-specific syntax:
+```bash
+# Replace ILIKE with LIKE for SQLite:
+grep -r "ILIKE" src/
+sed -i 's/ILIKE/LIKE/g' src/**/*.rs
+
+# Replace NOW() with datetime('now'):
+grep -r "NOW()" src/
+sed -i "s/NOW()/datetime('now')/g" src/**/*.rs
+
+# Replace PostgreSQL regex with SQLite IN/OR:
+# Change: WHERE currency ~ '(CHF|EUR)'
+# To:     WHERE (currency = 'CHF' OR currency = 'EUR')
+```
+
 #### "Python Dependencies Failed"
 ```bash
 # Upgrade pip
@@ -484,6 +528,182 @@ When reporting problems, include:
 ## 📝 Legal Disclaimer
 
 This system is designed for legal research assistance only. Generated legal documents should be reviewed by qualified legal professionals before use in actual legal proceedings. The system provides research support but does not constitute legal advice.
+
+---
+
+---
+
+## 🖥️ **STEP-BY-STEP USAGE GUIDE**
+
+### **Terminal Usage**
+
+#### **1. Start the Legal Research Server**
+```bash
+# Navigate to project directory
+cd devizahitel-copilot
+
+# Start the server (simplified version - always works)
+cargo run --bin devizahitel_legal_research
+
+# Alternative: Start full version (if database issues are resolved)
+# cargo run --bin devizahitel_legal_research_full
+
+# Server starts at: http://localhost:8080
+# Health check: http://localhost:8080/health
+# API info: http://localhost:8080/api/info
+```
+
+#### **2. Process Documents with OCR**
+```bash
+# Open new terminal window (keep server running)
+cd devizahitel-copilot/mistral_ocr_processor
+
+# Process contracts and legal documents
+python3 main.py \
+  --input-dir ../contracts_to_process \
+  --output-dir ../ocr_output \
+  --verbose
+
+# Example with specific file types:
+python3 main.py --pdf-only --input-dir ../pdfs
+python3 main.py --images-only --input-dir ../scanned_contracts
+```
+
+#### **3. Check Processing Status**
+```bash
+# View processed documents
+ls -la ocr_output/
+
+# Check processing summary
+cat ocr_output/processing_summary.md
+
+# View processing logs
+tail -f ocr_processing.log
+```
+
+#### **4. API Testing**
+```bash
+# Health check
+curl http://localhost:8080/health
+
+# API endpoints info
+curl http://localhost:8080/api/info
+
+# Future endpoints (when full version works):
+# curl -X POST http://localhost:8080/api/upload -F "file=@contract.pdf"
+# curl http://localhost:8080/api/precedents
+```
+
+### **Browser Usage**
+
+#### **1. Open Web Interface**
+```bash
+# Ensure server is running, then open browser to:
+http://localhost:8080
+
+# Or click: http://127.0.0.1:8080
+```
+
+#### **2. Web Interface Features**
+1. **Homepage**: Legal research system overview
+2. **Health Status**: System status and available features
+3. **API Documentation**: Available endpoints and usage
+4. **File Upload**: (Coming in full version) Upload contracts for analysis
+5. **Analysis Results**: (Coming in full version) View extracted clauses and precedents
+
+#### **3. Browser Testing**
+```bash
+# Test in browser address bar:
+http://localhost:8080/health        # JSON health status
+http://localhost:8080/api/info      # Available API endpoints
+```
+
+### **Daily Workflow**
+
+#### **Typical User Session**
+```bash
+# 1. Start your work session
+cd devizahitel-copilot
+cargo run --bin devizahitel_legal_research &
+
+# 2. Process new documents
+cd mistral_ocr_processor
+python3 main.py --input-dir ../new_contracts --verbose
+
+# 3. Check results
+ls ocr_output/
+cat ocr_output/processing_summary.md
+
+# 4. Access analysis via browser
+open http://localhost:8080
+
+# 5. End session
+pkill -f devizahitel_legal_research
+```
+
+#### **Batch Processing Large Document Sets**
+```bash
+# Process multiple document types
+python3 main.py --input-dir ../all_documents --file-types all --verbose
+
+# Resume interrupted processing
+python3 main.py --resume --input-dir ../documents
+
+# Process with increased timeout for large files
+python3 main.py --timeout 300 --verbose
+```
+
+### **Development Mode**
+
+#### **Debug and Logging**
+```bash
+# Enable detailed Rust logging
+RUST_LOG=debug cargo run --bin devizahitel_legal_research
+
+# Monitor server logs
+cargo run --bin devizahitel_legal_research 2>&1 | tee server.log
+
+# Check database status
+sqlite3 legal_research.db ".tables"
+sqlite3 legal_research.db "SELECT COUNT(*) FROM legal_cases;"
+```
+
+#### **Testing and Verification**
+```bash
+# Run verification script
+./verify_setup.sh
+
+# Test system components
+chmod +x test_system.sh
+./test_system.sh
+
+# Manual component testing
+python3 mistral_ocr_processor/main.py --help
+curl http://localhost:8080/health
+```
+
+---
+
+## 🚀 **QUICK COMMANDS REFERENCE**
+
+```bash
+# Essential commands for daily use:
+
+# Start server
+cargo run --bin devizahitel_legal_research
+
+# Process documents  
+python3 mistral_ocr_processor/main.py --input-dir contracts/ --verbose
+
+# Check health
+curl http://localhost:8080/health
+
+# Stop server
+pkill -f devizahitel_legal_research
+
+# View logs
+tail -f mistral_ocr_processor/ocr_processing.log
+```
 
 ---
 

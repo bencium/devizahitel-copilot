@@ -1,8 +1,8 @@
-use sqlx::{PgPool, Result, Row};
+use sqlx::{SqlitePool, Result, Row};
 use uuid::Uuid;
 use crate::models::{LegalCase, CaseSearchRequest, CaseMatch};
 
-pub async fn insert_case(pool: &PgPool, case: LegalCase) -> Result<LegalCase> {
+pub async fn insert_case(pool: &SqlitePool, case: LegalCase) -> Result<LegalCase> {
     let row = sqlx::query!(
         r#"
         INSERT INTO legal_cases (
@@ -48,7 +48,7 @@ pub async fn insert_case(pool: &PgPool, case: LegalCase) -> Result<LegalCase> {
     })
 }
 
-pub async fn get_case_by_id(pool: &PgPool, id: Uuid) -> Result<Option<LegalCase>> {
+pub async fn get_case_by_id(pool: &SqlitePool, id: Uuid) -> Result<Option<LegalCase>> {
     let row = sqlx::query!(
         "SELECT * FROM legal_cases WHERE id = $1",
         id
@@ -74,7 +74,7 @@ pub async fn get_case_by_id(pool: &PgPool, id: Uuid) -> Result<Option<LegalCase>
     }))
 }
 
-pub async fn get_all_cases(pool: &PgPool, limit: Option<i32>) -> Result<Vec<LegalCase>> {
+pub async fn get_all_cases(pool: &SqlitePool, limit: Option<i32>) -> Result<Vec<LegalCase>> {
     let limit = limit.unwrap_or(100);
     
     let rows = sqlx::query!(
@@ -102,16 +102,16 @@ pub async fn get_all_cases(pool: &PgPool, limit: Option<i32>) -> Result<Vec<Lega
     }).collect())
 }
 
-pub async fn search_cases(pool: &PgPool, request: CaseSearchRequest) -> Result<Vec<LegalCase>> {
+pub async fn search_cases(pool: &SqlitePool, request: CaseSearchRequest) -> Result<Vec<LegalCase>> {
     let mut query = "SELECT * FROM legal_cases WHERE 1=1".to_string();
-    let mut params: Vec<Box<dyn sqlx::Encode<'_, sqlx::Postgres> + Send + Sync>> = Vec::new();
+    let mut params: Vec<Box<dyn sqlx::Encode<'_, sqlx::Sqlite> + Send + Sync>> = Vec::new();
     let mut param_count = 0;
 
     // Add search filters
     if !request.query.is_empty() {
         param_count += 1;
         query.push_str(&format!(
-            " AND (case_name ILIKE ${} OR key_ruling ILIKE ${} OR full_text ILIKE ${})",
+            " AND (case_name LIKE ${} OR key_ruling LIKE ${} OR full_text LIKE ${})",
             param_count, param_count, param_count
         ));
         let search_term = format!("%{}%", request.query);
@@ -126,7 +126,7 @@ pub async fn search_cases(pool: &PgPool, request: CaseSearchRequest) -> Result<V
 
     if let Some(currency) = request.currency {
         param_count += 1;
-        query.push_str(&format!(" AND currency ILIKE ${}", param_count));
+        query.push_str(&format!(" AND currency LIKE ${}", param_count));
         let currency_pattern = format!("%{}%", currency);
         params.push(Box::new(currency_pattern));
     }
@@ -167,9 +167,9 @@ pub async fn search_cases(pool: &PgPool, request: CaseSearchRequest) -> Result<V
     let rows = sqlx::query!(
         r#"
         SELECT * FROM legal_cases 
-        WHERE case_name ILIKE $1 
-           OR key_ruling ILIKE $1 
-           OR full_text ILIKE $1
+        WHERE case_name LIKE $1 
+           OR key_ruling LIKE $1 
+           OR full_text LIKE $1
         ORDER BY significance_score DESC NULLS LAST, date DESC
         LIMIT $2
         "#,
@@ -197,15 +197,15 @@ pub async fn search_cases(pool: &PgPool, request: CaseSearchRequest) -> Result<V
     }).collect())
 }
 
-pub async fn get_fx_related_cases(pool: &PgPool) -> Result<Vec<LegalCase>> {
+pub async fn get_fx_related_cases(pool: &SqlitePool) -> Result<Vec<LegalCase>> {
     let rows = sqlx::query!(
         r#"
         SELECT * FROM legal_cases 
-        WHERE currency ~ '(CHF|EUR|USD|GBP)' 
-           OR case_name ILIKE '%foreign%currency%'
-           OR case_name ILIKE '%deviza%'
-           OR key_ruling ILIKE '%currency%'
-           OR key_ruling ILIKE '%exchange%rate%'
+        WHERE (currency = 'CHF' OR currency = 'EUR' OR currency = 'USD' OR currency = 'GBP') 
+           OR case_name LIKE '%foreign%currency%'
+           OR case_name LIKE '%deviza%'
+           OR key_ruling LIKE '%currency%'
+           OR key_ruling LIKE '%exchange%rate%'
         ORDER BY date DESC
         "#
     )
@@ -230,7 +230,7 @@ pub async fn get_fx_related_cases(pool: &PgPool) -> Result<Vec<LegalCase>> {
     }).collect())
 }
 
-pub async fn update_case_embedding(pool: &PgPool, case_id: Uuid, embedding: Vec<f32>) -> Result<()> {
+pub async fn update_case_embedding(pool: &SqlitePool, case_id: Uuid, embedding: Vec<f32>) -> Result<()> {
     sqlx::query!(
         "UPDATE legal_cases SET embedding = $1 WHERE id = $2",
         &embedding,
@@ -242,7 +242,7 @@ pub async fn update_case_embedding(pool: &PgPool, case_id: Uuid, embedding: Vec<
     Ok(())
 }
 
-pub async fn find_similar_cases(pool: &PgPool, embedding: Vec<f32>, limit: i32) -> Result<Vec<CaseMatch>> {
+pub async fn find_similar_cases(pool: &SqlitePool, embedding: Vec<f32>, limit: i32) -> Result<Vec<CaseMatch>> {
     // Note: This requires pgvector extension for efficient similarity search
     // For now, we'll use a simplified approach
     let cases = get_fx_related_cases(pool).await?;

@@ -1,12 +1,13 @@
 use actix_web::{web, HttpResponse, Result};
-use sqlx::PgPool;
+use sqlx::SqlitePool;
 use uuid::Uuid;
+use chrono::Datelike;
 use crate::models::{CaseSearchRequest};
 use crate::db;
 use serde_json::json;
 
 pub async fn get_cases(
-    pool: web::Data<PgPool>,
+    pool: web::Data<SqlitePool>,
     query: web::Query<CaseQuery>,
 ) -> Result<HttpResponse> {
     let pool = pool.get_ref();
@@ -27,7 +28,7 @@ pub async fn get_cases(
 }
 
 pub async fn get_case(
-    pool: web::Data<PgPool>,
+    pool: web::Data<SqlitePool>,
     path: web::Path<Uuid>,
 ) -> Result<HttpResponse> {
     let pool = pool.get_ref();
@@ -49,7 +50,7 @@ pub async fn get_case(
 }
 
 pub async fn search_cases(
-    pool: web::Data<PgPool>,
+    pool: web::Data<SqlitePool>,
     request: web::Json<CaseSearchRequest>,
 ) -> Result<HttpResponse> {
     let pool = pool.get_ref();
@@ -83,7 +84,7 @@ pub async fn search_cases(
 }
 
 fn calculate_search_relevance(case: &crate::models::LegalCase) -> f32 {
-    let mut relevance = 0.5;
+    let mut relevance: f32 = 0.5;
     
     // Boost for FX-related cases
     if case.is_foreign_currency_case() {

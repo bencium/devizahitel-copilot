@@ -67,7 +67,7 @@ impl TextProcessor {
         let decoded = general_purpose::STANDARD.decode(file_data)?;
         
         // Create temporary file
-        let mut temp_file = NamedTempFile::new_with_suffix(
+        let mut temp_file = NamedTempFile::with_suffix(
             match content_type {
                 "image/jpeg" => ".jpg",
                 "image/png" => ".png", 
@@ -92,7 +92,7 @@ impl TextProcessor {
         let decoded = general_purpose::STANDARD.decode(file_data)?;
         
         // Create temporary file
-        let mut temp_file = NamedTempFile::new_with_suffix(".docx")?;
+        let mut temp_file = NamedTempFile::with_suffix(".docx")?;
         std::io::Write::write_all(&mut temp_file, &decoded)?;
         
         // Extract text from Word document

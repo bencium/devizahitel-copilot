@@ -21,7 +21,20 @@
       "WebFetch(domain:bankihitelkarosultak.hu)",
       "Bash(git init:*)",
       "Bash(git add:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(rustc --version)",
+      "Bash(cargo --version)",
+      "Bash(cargo build:*)",
+      "Bash(node:*)",
+      "Bash(npm:*)",
+      "Bash(find:*)",
+      "Bash(sqlite3:*)",
+      "Bash(cargo run:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []

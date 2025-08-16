@@ -1,5 +1,6 @@
 use uuid::Uuid;
-use sqlx::PgPool;
+use sqlx::SqlitePool;
+use chrono::Datelike;
 use crate::models::{LegalCase, ExtractedClause, CaseMatch, ApplicablePrecedent};
 use crate::matching::SimilarityEngine;
 use std::collections::HashMap;
@@ -31,7 +32,7 @@ impl PrecedentMatcher {
 
     pub async fn match_precedents(
         &self,
-        pool: &PgPool,
+        pool: &SqlitePool,
         clauses: &[ExtractedClause],
     ) -> Result<MatchingResult, Box<dyn std::error::Error>> {
         let mut clause_matches = Vec::new();

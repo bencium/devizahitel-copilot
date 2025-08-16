@@ -1,8 +1,8 @@
-use sqlx::{PgPool, Result};
+use sqlx::{SqlitePool, Result};
 use uuid::Uuid;
 use crate::models::{ResearchSheet, GeneratedPleading};
 
-pub async fn insert_research_sheet(pool: &PgPool, sheet: ResearchSheet) -> Result<ResearchSheet> {
+pub async fn insert_research_sheet(pool: &SqlitePool, sheet: ResearchSheet) -> Result<ResearchSheet> {
     let row = sqlx::query!(
         r#"
         INSERT INTO research_sheets (
@@ -48,7 +48,7 @@ pub async fn insert_research_sheet(pool: &PgPool, sheet: ResearchSheet) -> Resul
     })
 }
 
-pub async fn get_research_sheet_by_document(pool: &PgPool, document_id: Uuid) -> Result<Option<ResearchSheet>> {
+pub async fn get_research_sheet_by_document(pool: &SqlitePool, document_id: Uuid) -> Result<Option<ResearchSheet>> {
     let row = sqlx::query!(
         "SELECT * FROM research_sheets WHERE document_id = $1 ORDER BY created_at DESC LIMIT 1",
         document_id
@@ -73,7 +73,7 @@ pub async fn get_research_sheet_by_document(pool: &PgPool, document_id: Uuid) ->
     }))
 }
 
-pub async fn get_research_sheet_by_id(pool: &PgPool, id: Uuid) -> Result<Option<ResearchSheet>> {
+pub async fn get_research_sheet_by_id(pool: &SqlitePool, id: Uuid) -> Result<Option<ResearchSheet>> {
     let row = sqlx::query!(
         "SELECT * FROM research_sheets WHERE id = $1",
         id
@@ -98,7 +98,7 @@ pub async fn get_research_sheet_by_id(pool: &PgPool, id: Uuid) -> Result<Option<
     }))
 }
 
-pub async fn update_research_sheet(pool: &PgPool, sheet: ResearchSheet) -> Result<ResearchSheet> {
+pub async fn update_research_sheet(pool: &SqlitePool, sheet: ResearchSheet) -> Result<ResearchSheet> {
     let row = sqlx::query!(
         r#"
         UPDATE research_sheets SET
@@ -110,7 +110,7 @@ pub async fn update_research_sheet(pool: &PgPool, sheet: ResearchSheet) -> Resul
             recommended_actions = $7,
             draft_pleading = $8,
             confidence_score = $9,
-            updated_at = NOW()
+            updated_at = datetime('now')
         WHERE id = $1
         RETURNING *
         "#,
@@ -144,7 +144,7 @@ pub async fn update_research_sheet(pool: &PgPool, sheet: ResearchSheet) -> Resul
     })
 }
 
-pub async fn insert_generated_pleading(pool: &PgPool, pleading: GeneratedPleading) -> Result<GeneratedPleading> {
+pub async fn insert_generated_pleading(pool: &SqlitePool, pleading: GeneratedPleading) -> Result<GeneratedPleading> {
     let row = sqlx::query!(
         r#"
         INSERT INTO generated_pleadings (
@@ -177,7 +177,7 @@ pub async fn insert_generated_pleading(pool: &PgPool, pleading: GeneratedPleadin
     })
 }
 
-pub async fn get_pleadings_by_research_sheet(pool: &PgPool, research_sheet_id: Uuid) -> Result<Vec<GeneratedPleading>> {
+pub async fn get_pleadings_by_research_sheet(pool: &SqlitePool, research_sheet_id: Uuid) -> Result<Vec<GeneratedPleading>> {
     let rows = sqlx::query!(
         "SELECT * FROM generated_pleadings WHERE research_sheet_id = $1 ORDER BY generated_at DESC",
         research_sheet_id
@@ -200,7 +200,7 @@ pub async fn get_pleadings_by_research_sheet(pool: &PgPool, research_sheet_id: U
     }).collect())
 }
 
-pub async fn get_all_research_sheets(pool: &PgPool, limit: Option<i32>) -> Result<Vec<ResearchSheet>> {
+pub async fn get_all_research_sheets(pool: &SqlitePool, limit: Option<i32>) -> Result<Vec<ResearchSheet>> {
     let limit = limit.unwrap_or(50);
     
     let rows = sqlx::query!(
@@ -227,13 +227,13 @@ pub async fn get_all_research_sheets(pool: &PgPool, limit: Option<i32>) -> Resul
     }).collect())
 }
 
-pub async fn search_research_sheets(pool: &PgPool, search_term: &str) -> Result<Vec<ResearchSheet>> {
+pub async fn search_research_sheets(pool: &SqlitePool, search_term: &str) -> Result<Vec<ResearchSheet>> {
     let rows = sqlx::query!(
         r#"
         SELECT * FROM research_sheets 
-        WHERE analysis_summary ILIKE $1 
-           OR case_reference ILIKE $1
-           OR client_name ILIKE $1
+        WHERE analysis_summary LIKE $1 
+           OR case_reference LIKE $1
+           OR client_name LIKE $1
         ORDER BY confidence_score DESC, created_at DESC
         LIMIT 100
         "#,

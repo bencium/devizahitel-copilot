@@ -3,7 +3,7 @@ use actix_files as fs;
 use actix_cors::Cors;
 use dotenv::dotenv;
 use log::info;
-use sqlx::PgPool;
+use sqlx::SqlitePool;
 use std::env;
 
 mod api;
@@ -34,7 +34,7 @@ async fn main() -> std::io::Result<()> {
         .expect("PORT must be a valid number");
 
     // Create database connection pool
-    let pool = PgPool::connect(&database_url)
+    let pool = SqlitePool::connect(&database_url)
         .await
         .expect("Failed to connect to database");
 

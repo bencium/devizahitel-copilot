@@ -89,7 +89,7 @@ impl SimilarityEngine {
         
         match clause_type {
             "fx_risk" => {
-                let mut score = 0.0;
+                let mut score: f32 = 0.0;
                 for keyword in &self.fx_keywords {
                     if ruling_lower.contains(&keyword.to_lowercase()) {
                         score += 0.15;
@@ -98,7 +98,7 @@ impl SimilarityEngine {
                 score.clamp(0.0, 1.0)
             },
             "transparency" => {
-                let mut score = 0.0;
+                let mut score: f32 = 0.0;
                 for keyword in &self.transparency_keywords {
                     if ruling_lower.contains(&keyword.to_lowercase()) {
                         score += 0.2;
@@ -108,7 +108,7 @@ impl SimilarityEngine {
             },
             _ => {
                 // General legal similarity
-                let mut score = 0.0;
+                let mut score: f32 = 0.0;
                 for keyword in &self.legal_keywords {
                     if ruling_lower.contains(&keyword.to_lowercase()) {
                         score += 0.1;
@@ -120,7 +120,7 @@ impl SimilarityEngine {
     }
 
     pub fn calculate_precedent_strength(&self, case_year: i32, jurisdiction: &str, citation_count: Option<i32>) -> f32 {
-        let mut strength = 0.5; // Base strength
+        let mut strength: f32 = 0.5; // Base strength
         
         // Recency bonus (more recent cases are stronger)
         let years_ago = 2025 - case_year;
@@ -194,7 +194,7 @@ impl SimilarityEngine {
     }
 
     pub fn calculate_clause_criticality(&self, clause_text: &str, clause_type: &str) -> f32 {
-        let mut criticality = 0.3; // Base criticality
+        let mut criticality: f32 = 0.3; // Base criticality
         
         let text_lower = clause_text.to_lowercase();
         
@@ -247,7 +247,7 @@ impl SimilarityEngine {
     fn calculate_keyword_bonus(&self, text1: &str, text2: &str) -> f32 {
         let text1_lower = text1.to_lowercase();
         let text2_lower = text2.to_lowercase();
-        let mut bonus = 0.0;
+        let mut bonus: f32 = 0.0;
         
         // FX keywords bonus
         for keyword in &self.fx_keywords {

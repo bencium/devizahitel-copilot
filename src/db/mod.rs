@@ -3,25 +3,25 @@ pub mod documents;
 pub mod clauses;
 pub mod research;
 
-use sqlx::{PgPool, Result};
+use sqlx::{SqlitePool, Result};
 use uuid::Uuid;
 
 pub struct Database {
-    pool: PgPool,
+    pool: SqlitePool,
 }
 
 impl Database {
-    pub fn new(pool: PgPool) -> Self {
+    pub fn new(pool: SqlitePool) -> Self {
         Self { pool }
     }
 
-    pub fn pool(&self) -> &PgPool {
+    pub fn pool(&self) -> &SqlitePool {
         &self.pool
     }
 }
 
 // Database initialization and seed data
-pub async fn seed_precedent_data(pool: &PgPool) -> Result<()> {
+pub async fn seed_precedent_data(pool: &SqlitePool) -> Result<()> {
     // Insert CJEU cases from CSV data
     let cases = get_default_precedent_cases();
     

@@ -1,5 +1,5 @@
 use actix_web::{web, HttpResponse, Result};
-use sqlx::PgPool;
+use sqlx::SqlitePool;
 use uuid::Uuid;
 use crate::models::{ClauseExtractionRequest, DraftPleadingRequest, ResearchRequest, ResearchSheet, LegalFindings, GeneratedPleading};
 use crate::extractors::{ClauseExtractor, LanguageDetector};
@@ -30,7 +30,7 @@ pub struct GenerateDraftRequest {
 }
 
 pub async fn extract_clauses(
-    pool: web::Data<PgPool>,
+    pool: web::Data<SqlitePool>,
     request: web::Json<ExtractClausesRequest>,
 ) -> Result<HttpResponse> {
     let pool = pool.get_ref();
@@ -92,7 +92,7 @@ pub async fn extract_clauses(
 }
 
 pub async fn match_precedents(
-    pool: web::Data<PgPool>,
+    pool: web::Data<SqlitePool>,
     request: web::Json<MatchPrecedentsRequest>,
 ) -> Result<HttpResponse> {
     let pool = pool.get_ref();
@@ -185,7 +185,7 @@ pub async fn match_precedents(
 }
 
 pub async fn generate_draft(
-    pool: web::Data<PgPool>,
+    pool: web::Data<SqlitePool>,
     request: web::Json<GenerateDraftRequest>,
 ) -> Result<HttpResponse> {
     let pool = pool.get_ref();
@@ -258,7 +258,7 @@ pub async fn generate_draft(
 }
 
 pub async fn get_research_sheet(
-    pool: web::Data<PgPool>,
+    pool: web::Data<SqlitePool>,
     path: web::Path<Uuid>,
 ) -> Result<HttpResponse> {
     let pool = pool.get_ref();

@@ -1,5 +1,5 @@
 use std::error::Error;
-use sqlx::PgPool;
+use sqlx::SqlitePool;
 use dotenv::dotenv;
 use std::env;
 
@@ -10,7 +10,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let database_url = env::var("DATABASE_URL")
         .expect("DATABASE_URL must be set");
     
-    let pool = PgPool::connect(&database_url).await?;
+    let pool = SqlitePool::connect(&database_url).await?;
     
     println!("Connected to database, populating precedent data...");
     

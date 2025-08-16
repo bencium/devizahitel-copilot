@@ -65,9 +65,10 @@ Hungarian FX Mortgage Legal Research System
 ## 📋 Prerequisites
 
 1. **🦀 Rust** (1.70+) - [Install from rustup.rs](https://rustup.rs/)
-2. **🐍 Python** (3.8+) - For OCR document processing
-3. **🔑 Mistral API Key** - [Get from platform.mistral.ai](https://platform.mistral.ai)
-4. **📄 Tesseract OCR** (Optional) - For fallback document processing
+2. **🐍 Python** (3.8+) - For OCR document processing  
+3. **🟢 Node.js** (18+) - **Required for local server** - [Download from nodejs.org](https://nodejs.org)
+4. **🔑 Mistral API Key** - [Get from platform.mistral.ai](https://platform.mistral.ai)
+5. **📄 Tesseract OCR** (Optional) - For fallback document processing
 
 ## 🚀 Quick Start
 
@@ -86,9 +87,10 @@ echo "MISTRAL_API_KEY=your_mistral_api_key_here" >> .env
 
 # 3. Build and run
 cargo build --release
-cargo run
+cargo run --bin devizahitel_legal_research
 
-# 4. Open http://localhost:8080
+# 4. Open http://localhost:8080 
+# ✅ Working server with health check endpoint
 ```
 
 **For detailed instructions, troubleshooting, and advanced configuration, see [SETUP.md](./SETUP.md)**

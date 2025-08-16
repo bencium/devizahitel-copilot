@@ -1,8 +1,8 @@
-use sqlx::{PgPool, Result};
+use sqlx::{SqlitePool, Result};
 use uuid::Uuid;
 use crate::models::Document;
 
-pub async fn insert_document(pool: &PgPool, document: Document) -> Result<Document> {
+pub async fn insert_document(pool: &SqlitePool, document: Document) -> Result<Document> {
     let row = sqlx::query!(
         r#"
         INSERT INTO documents (
@@ -49,7 +49,7 @@ pub async fn insert_document(pool: &PgPool, document: Document) -> Result<Docume
     })
 }
 
-pub async fn get_document_by_id(pool: &PgPool, id: Uuid) -> Result<Option<Document>> {
+pub async fn get_document_by_id(pool: &SqlitePool, id: Uuid) -> Result<Option<Document>> {
     let row = sqlx::query!(
         "SELECT * FROM documents WHERE id = $1",
         id
@@ -76,7 +76,7 @@ pub async fn get_document_by_id(pool: &PgPool, id: Uuid) -> Result<Option<Docume
 }
 
 pub async fn get_documents(
-    pool: &PgPool, 
+    pool: &SqlitePool, 
     limit: Option<i32>, 
     offset: Option<i32>, 
     status: Option<&str>
@@ -121,9 +121,9 @@ pub async fn get_documents(
     }).collect())
 }
 
-pub async fn update_document_status(pool: &PgPool, id: Uuid, status: &str) -> Result<()> {
+pub async fn update_document_status(pool: &SqlitePool, id: Uuid, status: &str) -> Result<()> {
     sqlx::query!(
-        "UPDATE documents SET processing_status = $1, updated_at = NOW() WHERE id = $2",
+        "UPDATE documents SET processing_status = $1, updated_at = datetime('now') WHERE id = $2",
         status,
         id
     )
@@ -133,9 +133,9 @@ pub async fn update_document_status(pool: &PgPool, id: Uuid, status: &str) -> Re
     Ok(())
 }
 
-pub async fn update_document_text(pool: &PgPool, id: Uuid, extracted_text: &str) -> Result<()> {
+pub async fn update_document_text(pool: &SqlitePool, id: Uuid, extracted_text: &str) -> Result<()> {
     sqlx::query!(
-        "UPDATE documents SET extracted_text = $1, updated_at = NOW() WHERE id = $2",
+        "UPDATE documents SET extracted_text = $1, updated_at = datetime('now') WHERE id = $2",
         extracted_text,
         id
     )
@@ -145,7 +145,7 @@ pub async fn update_document_text(pool: &PgPool, id: Uuid, extracted_text: &str)
     Ok(())
 }
 
-pub async fn get_documents_by_client(pool: &PgPool, client_id: &str) -> Result<Vec<Document>> {
+pub async fn get_documents_by_client(pool: &SqlitePool, client_id: &str) -> Result<Vec<Document>> {
     let rows = sqlx::query!(
         "SELECT * FROM documents WHERE client_id = $1 ORDER BY created_at DESC",
         client_id
@@ -171,7 +171,7 @@ pub async fn get_documents_by_client(pool: &PgPool, client_id: &str) -> Result<V
     }).collect())
 }
 
-pub async fn get_documents_by_type(pool: &PgPool, document_type: &str) -> Result<Vec<Document>> {
+pub async fn get_documents_by_type(pool: &SqlitePool, document_type: &str) -> Result<Vec<Document>> {
     let rows = sqlx::query!(
         "SELECT * FROM documents WHERE document_type = $1 ORDER BY created_at DESC",
         document_type

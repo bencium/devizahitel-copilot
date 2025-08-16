@@ -1,5 +1,5 @@
 use actix_web::{web, HttpResponse, Result};
-use sqlx::PgPool;
+use sqlx::SqlitePool;
 use uuid::Uuid;
 use crate::models::{Document, DocumentUploadRequest, DocumentProcessingResult};
 use crate::extractors::{TextProcessor, LanguageDetector, ClauseExtractor};
@@ -7,7 +7,7 @@ use crate::db;
 use serde_json::json;
 
 pub async fn upload_document(
-    pool: web::Data<PgPool>,
+    pool: web::Data<SqlitePool>,
     request: web::Json<DocumentUploadRequest>,
 ) -> Result<HttpResponse> {
     let pool = pool.get_ref();
@@ -99,7 +99,7 @@ pub async fn upload_document(
 }
 
 pub async fn get_documents(
-    pool: web::Data<PgPool>,
+    pool: web::Data<SqlitePool>,
     query: web::Query<DocumentQuery>,
 ) -> Result<HttpResponse> {
     let pool = pool.get_ref();
@@ -117,7 +117,7 @@ pub async fn get_documents(
 }
 
 pub async fn get_document(
-    pool: web::Data<PgPool>,
+    pool: web::Data<SqlitePool>,
     path: web::Path<Uuid>,
 ) -> Result<HttpResponse> {
     let pool = pool.get_ref();
