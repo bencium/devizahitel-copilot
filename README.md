@@ -1,156 +1,113 @@
-# Legal Research System - Foreign Currency Mortgage Analysis
+# Hungarian FX Mortgage Legal Research System
 
-A Rust-based legal research system designed to analyze foreign currency mortgage contracts and find relevant legal precedents, specifically focusing on the Central and Eastern European FX mortgage crisis.
+🏛️ **AI-powered legal research assistant for Hungarian foreign-currency mortgage litigation**
 
-## Features
+A comprehensive Rust-based system designed to analyze foreign currency mortgage contracts, extract violation clauses, match legal precedents, and calculate financial damages for litigation against Hungarian banks.
 
-- **Document Processing**: Upload and analyze PDF, Word, image, and text documents
-- **Clause Extraction**: Extract and categorize contract clauses using multilingual regex patterns
-- **Precedent Matching**: Match contract clauses against CJEU and national court precedents
-- **Legal Drafting**: Auto-generate legal pleadings based on extracted clauses and matched precedents
-- **Multilingual Support**: Hungarian, English, Czech, Polish, Romanian, Croatian, and Slovenian
-- **Web Interface**: Modern HTML/CSS/JavaScript frontend for easy interaction
+## 🎯 Key Features
 
-## Architecture
+- **🔍 Document Analysis**: OCR processing of contracts, correspondence, and legal documents via Mistral AI
+- **⚖️ Legal Clause Extraction**: Identify 9 types of violations (FX risk, broker liability, insurance breaches)
+- **📚 Precedent Matching**: Match against CJEU, Hungarian Kúria, and Polish Supreme Court cases
+- **💰 Financial Calculator**: Comprehensive damage calculations including broker liability and lost opportunity costs  
+- **📄 Legal Document Generation**: Auto-draft complaints, settlement demands, and evidence summaries
+- **🌐 Bilingual Support**: Complete Hungarian and English language processing and output
+- **🔒 Privacy-First**: Local deployment with SQLite + Chroma vector database, no cloud dependencies
+
+## 🏗️ System Architecture
 
 ```
-src/
-├── main.rs              # Application entry point
-├── models/              # Data models (cases, documents, clauses, research)
-├── extractors/          # Text processing and clause extraction
-├── matching/            # Precedent matching and similarity algorithms
-├── api/                 # REST API endpoints
-└── db/                  # Database operations
+Hungarian FX Mortgage Legal Research System
+├── 🦀 Rust Backend (Legal Analysis Engine)
+│   ├── src/api/          # REST API endpoints
+│   ├── src/extractors/   # Contract clause extraction
+│   ├── src/matching/     # Legal precedent matching
+│   ├── src/models/       # Data structures
+│   └── src/db/           # Database operations
+├── 🐍 Python OCR Processor
+│   ├── mistral_client.py # Mistral AI integration
+│   ├── main.py          # Document processing pipeline
+│   └── fallback_ocr.py  # Tesseract backup
+├── 📊 Local Databases
+│   ├── SQLite           # Case metadata and analysis
+│   └── Chroma           # Vector similarity search
+└── 🌐 Web Interface     # http://localhost:8080
 ```
 
-## Database Schema
+## 💾 Database Schema
 
-The system uses PostgreSQL with the following main tables:
+**Local SQLite Database:**
 - `legal_cases` - CJEU and national court precedents
-- `documents` - Uploaded client documents
-- `extracted_clauses` - Contract clauses extracted from documents
-- `precedent_matches` - Matches between clauses and precedents
-- `research_sheets` - Complete legal research analysis
-- `generated_pleadings` - Auto-drafted legal documents
+- `documents` - Processed contract documents  
+- `extracted_clauses` - Identified contract violations
+- `precedent_matches` - Legal precedent similarity scores
+- `financial_calculations` - Damage and restitution amounts
+- `generated_reports` - Complete legal analysis packages
 
-## Prerequisites
+## 📋 Prerequisites
 
-1. **Rust** (latest stable version)
-2. **PostgreSQL** (v12 or later) or **Supabase** account
-3. **Optional**: Tesseract OCR for image processing
-4. **Optional**: OpenAI API key for advanced embeddings
+1. **🦀 Rust** (1.70+) - [Install from rustup.rs](https://rustup.rs/)
+2. **🐍 Python** (3.8+) - For OCR document processing
+3. **🔑 Mistral API Key** - [Get from platform.mistral.ai](https://platform.mistral.ai)
+4. **📄 Tesseract OCR** (Optional) - For fallback document processing
 
-## Setup Instructions
+## 🚀 Quick Start
 
-### 1. Clone and Install Dependencies
+### 📖 **[Complete Setup Guide → SETUP.md](./SETUP.md)**
+
+**5-Minute Installation:**
 
 ```bash
-git clone <repository-url>
-cd devizahitel_legal_research
-cargo build
-```
+# 1. Clone repository
+git clone https://github.com/bencium/devizahitel-copilot.git
+cd devizahitel-copilot
 
-### 2. Database Setup
-
-#### Option A: Local PostgreSQL
-```bash
-# Install PostgreSQL and create database
-createdb devizahitel_legal_research
-
-# Set environment variable
-export DATABASE_URL="postgresql://username:password@localhost:5432/devizahitel_legal_research"
-```
-
-#### Option B: Supabase (Recommended)
-1. Create a new project at [supabase.com](https://supabase.com)
-2. Copy the database URL from your project settings
-3. Set environment variable:
-```bash
-export DATABASE_URL="postgresql://postgres:password@db.your-project.supabase.co:5432/postgres"
-```
-
-### 3. Environment Configuration
-
-Copy the example environment file and configure:
-```bash
+# 2. Configure Mistral API
 cp .env.example .env
-```
+echo "MISTRAL_API_KEY=your_mistral_api_key_here" >> .env
 
-Edit `.env` with your settings:
-```env
-DATABASE_URL=your_database_url_here
-PORT=8080
-RUST_LOG=info
-OPENAI_API_KEY=your_openai_key_here  # Optional
-```
-
-### 4. Database Migration
-
-The application will automatically run migrations on startup. The migration includes:
-- Creating all necessary tables
-- Setting up indexes for performance
-- Creating triggers for timestamp updates
-
-### 5. Run the Application
-
-```bash
+# 3. Build and run
+cargo build --release
 cargo run
+
+# 4. Open http://localhost:8080
 ```
 
-The server will start on `http://localhost:8080`
+**For detailed instructions, troubleshooting, and advanced configuration, see [SETUP.md](./SETUP.md)**
 
-## Usage
+## 🎯 How It Works
 
-### Web Interface
-
-1. Open `http://localhost:8080` in your browser
-2. Upload a document (PDF, Word, image, or text)
-3. The system will:
-   - Extract text from the document
-   - Identify and categorize contract clauses
-   - Match clauses against legal precedents
-   - Generate a draft legal pleading
-
-### API Endpoints
-
-#### Document Management
-- `POST /api/documents` - Upload and process document
-- `GET /api/documents` - List all documents
-- `GET /api/documents/{id}` - Get specific document with clauses
-
-#### Legal Cases
-- `GET /api/cases` - List legal precedents
-- `GET /api/cases/{id}` - Get specific case
-- `POST /api/cases/search` - Search cases with filters
-
-#### Research Workflow
-- `POST /api/research/extract-clauses` - Extract clauses from document
-- `POST /api/research/match-precedents` - Find matching precedents
-- `POST /api/research/generate-draft` - Generate legal pleading
-- `GET /api/research/sheet/{document_id}` - Get complete research analysis
-
-### Example API Usage
-
+### 1. Document Processing
 ```bash
-# Upload a document
-curl -X POST http://localhost:8080/api/documents \
-  -H "Content-Type: application/json" \
-  -d '{
-    "filename": "mortgage_contract.pdf",
-    "content_type": "application/pdf",
-    "file_data": "base64_encoded_file_content",
-    "document_type": "mortgage_contract",
-    "language": "hu"
-  }'
+# Process contracts with Mistral OCR
+cd mistral_ocr_processor
+python3 main.py --input-dir contracts/ --output-dir ocr_output/
+```
 
-# Search for FX-related cases
-curl -X POST http://localhost:8080/api/cases/search \
-  -H "Content-Type: application/json" \
-  -d '{
-    "query": "foreign currency",
-    "country": "Hungary",
-    "limit": 10
-  }'
+### 2. Legal Analysis
+- 🔍 **Contract Analysis**: Automatically extracts FX risk violations, broker liability issues
+- ⚖️ **Precedent Matching**: Finds relevant CJEU and Hungarian court cases  
+- 💰 **Damage Calculator**: Calculates comprehensive financial damages
+- 📄 **Document Generation**: Creates legal complaints and settlement demands
+
+### 3. Web Interface
+1. **Open**: `http://localhost:8080`
+2. **Upload**: Contract PDFs, images, Word documents
+3. **Analyze**: Automatic clause extraction and precedent matching
+4. **Download**: Complete legal package (Hungarian/English)
+
+### 4. API Integration
+```bash
+# Health check
+curl http://localhost:8080/health
+
+# Get legal precedents  
+curl http://localhost:8080/api/cases
+
+# Process document
+curl -X POST http://localhost:8080/api/research/analyze \
+  -F "file=@contract.pdf" \
+  -F "language=hu"
 ```
 
 ## Legal Precedents Database
@@ -221,7 +178,17 @@ cargo test --package devizahitel_legal_research --lib models::case::tests
 - **Embeddings**: OpenAI API calls are rate-limited; implement local caching
 - **OCR Processing**: Tesseract can be slow; consider background job processing
 
-## Legal Disclaimer
+## 🏗️ Architecture & Development
+
+**System Architecture, Design, Programming & Ideation by [Bencium.io](https://www.bencium.io/)**
+
+This comprehensive legal research system represents innovative AI-first architecture combining:
+- Advanced legal document processing with Mistral AI
+- Sophisticated precedent matching algorithms
+- Comprehensive financial damage calculation models
+- Privacy-first local deployment strategy
+
+## 📄 Legal Disclaimer
 
 This system is designed for legal research assistance only. Generated legal documents should be reviewed by qualified legal professionals before use in actual legal proceedings.
 

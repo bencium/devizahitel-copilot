@@ -136,6 +136,7 @@ ocr_output/
 
 # Allow specific public documentation
 !README.md
+!SETUP.md
 !SEC/*.md
 !Precedents/*.md
 !Precedents/*.csv
