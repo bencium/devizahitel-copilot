@@ -105,6 +105,13 @@ env/
 venv/
 .venv/
 
+# Python files with personal information
+mistral_ocr_processor/process_large_files.py
+mistral_ocr_processor/process_failed_files.py
+mistral_ocr_processor/filename_utils.py
+mistral_ocr_processor/ocr_output_retry/
+mistral_ocr_processor/ocr_output_retry_large/
+
 # Rust
 /target/
 Cargo.lock
