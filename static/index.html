@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hungarian FX Mortgage Legal Research System - AI Powered</title>
+    <title>Hungarian FX Mortgage Legal Research System</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -12,7 +12,7 @@
             line-height: 1.6;
             color: #333;
             background: #f8f9fa;
-            padding: 20px;
+            padding: 24px;
         }
         
         .container {
@@ -21,39 +21,29 @@
         }
         
         .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: #333;
             color: white;
-            padding: 30px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            text-align: center;
+            padding: 24px;
+            margin-bottom: 32px;
         }
         
         .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 2.074rem;
+            margin-bottom: 8px;
+            font-weight: 600;
         }
         
         .header p {
-            font-size: 1.2em;
+            font-size: 1.2rem;
             opacity: 0.9;
         }
 
-        .ai-badge {
-            background: #27ae60;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            margin-left: 10px;
-        }
         
         .disclaimer {
             background: #fee;
             border: 2px solid #e74c3c;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 30px;
+            padding: 24px;
+            margin-bottom: 32px;
             text-align: center;
         }
         
@@ -65,9 +55,8 @@
         .status-bar {
             background: #e8f4f8;
             border: 1px solid #3498db;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 20px;
+            padding: 16px;
+            margin-bottom: 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -109,7 +98,6 @@
             background: white;
             border-radius: 12px;
             padding: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
         
         .card h2 {
@@ -195,7 +183,6 @@
             border-radius: 8px;
             padding: 15px;
             margin: 10px 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .case-header {
@@ -415,7 +402,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Hungarian FX Mortgage Legal Research System <span class="ai-badge">🤖 AI Powered</span></h1>
+            <h1>Hungarian FX Mortgage Legal Research System</h1>
             <p>Case-Agnostic AI Analysis for Any Hungarian FX Mortgage Case</p>
         </div>
 
@@ -444,10 +431,10 @@
         </div>
 
         <div class="tabs">
-            <div class="tab active" onclick="showTab('analysis')">🔍 Case Analysis</div>
-            <div class="tab" onclick="showTab('documents')">📄 Document Generation</div>
-            <div class="tab" onclick="showTab('corrections')">✏️ Corrections & Overrides</div>
-            <div class="tab" onclick="showTab('actions')">📋 Action Steps</div>
+            <div class="tab active" onclick="showTab('analysis')">Case Analysis</div>
+            <div class="tab" onclick="showTab('documents')">Document Generation</div>
+            <div class="tab" onclick="showTab('corrections')">Corrections & Overrides</div>
+            <div class="tab" onclick="showTab('actions')">Action Steps</div>
         </div>
 
         <!-- Analysis Tab -->
@@ -472,7 +459,7 @@
                     </div>
 
                     <button class="btn btn-success" onclick="startAnalysis()" id="analyzeBtn">
-                        🤖 Analyze Case with AI
+                        Analyze Case
                     </button>
                 </div>
 
@@ -487,7 +474,7 @@
             <!-- Case Results -->
             <div id="caseResults" class="hidden">
                 <div class="card">
-                    <h2>📊 Case Analysis Results</h2>
+                    <h2>Case Analysis Results</h2>
                     <div id="caseAnalysisContent"></div>
                 </div>
             </div>
@@ -496,7 +483,7 @@
         <!-- Document Generation Tab -->
         <div id="documents" class="tab-content">
             <div class="card">
-                <h2>📄 AI-Generated Legal Documents</h2>
+                <h2>Generated Legal Documents</h2>
                 
                 <div class="document-generation">
                     <h4>Select Documents to Generate:</h4>
@@ -719,7 +706,7 @@
                 showErrorMessage(`Analysis error: ${error.message}`);
             } finally {
                 analyzeBtn.disabled = false;
-                analyzeBtn.innerHTML = '🤖 Analyze Case with AI';
+                analyzeBtn.innerHTML = 'Analyze Case';
             }
         }
 
@@ -729,7 +716,7 @@
             
             let html = `
                 <div class="case-summary">
-                    <h3>📊 Analysis Summary</h3>
+                    <h3>Analysis Summary</h3>
                     <p><strong>Total Recovery Potential:</strong> <span style="color: #27ae60; font-size: 1.2em; font-weight: bold;">${formatCurrency(analysis.total_recovery)} HUF</span></p>
                     <p><strong>Analysis Date:</strong> ${analysis.analysis_date}</p>
                     <p><strong>Number of Cases:</strong> ${analysis.cases.length}</p>
@@ -764,7 +751,7 @@
                         </div>
 
                         <div class="damage-breakdown">
-                            <h4>💰 Estimated Damages</h4>
+                            <h4>Estimated Damages</h4>
                             <div class="damage-item">
                                 <span><strong>Total Recovery for ${caseData.bank_name}:</strong></span>
                                 <span><strong>${formatCurrency(caseData.total_damages)} HUF</strong></span>
@@ -936,7 +923,7 @@
                     <h4>${doc.document_type.replace('_', ' ')} - ${doc.bank_name}</h4>
                     <p><strong>Generated:</strong> ${doc.generated_date}</p>
                     <button class="btn" onclick="downloadDocument('${doc.filename}', '${encodeURIComponent(doc.content)}')">
-                        📄 Download ${doc.filename}
+                        Download ${doc.filename}
                     </button>
                     <details style="margin-top: 10px;">
                         <summary>Preview Content</summary>
@@ -967,7 +954,7 @@
                 
                 contentDiv.innerHTML = `
                     <div class="case-summary">
-                        <h3>🎯 Your Personalized Action Plan</h3>
+                        <h3>Your Personalized Action Plan</h3>
                         <p>Based on analysis of your ${analysis.cases.length} case(s) with total recovery potential of <strong>${formatCurrency(analysis.total_recovery)} HUF</strong></p>
                     </div>
                     <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; white-space: pre-wrap; font-family: Georgia, serif; line-height: 1.8;">
