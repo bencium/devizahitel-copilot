@@ -1,5 +1,7 @@
 # Hungarian FX Mortgage Legal Research System
 
+**System architected, designed, programmed & ideated by [https://www.bencium.io/](https://www.bencium.io/)**
+
 🏛️ **AI-powered legal research assistant for Hungarian foreign-currency mortgage litigation**
 
 A comprehensive Rust-based system designed to analyze foreign currency mortgage contracts, extract violation clauses, match legal precedents, and calculate financial damages for litigation against Hungarian banks.
