@@ -45,7 +45,7 @@ pub struct LegalIssue {
     pub supporting_clauses: Vec<Uuid>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ApplicablePrecedent {
     pub case_id: Uuid,
     pub case_number: String,
@@ -75,7 +75,7 @@ pub struct DraftPleadingRequest {
     pub style_preference: String, // formal, academic, aggressive
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GeneratedPleading {
     pub id: Uuid,
     pub research_sheet_id: Uuid,

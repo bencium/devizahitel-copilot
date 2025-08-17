@@ -1,5 +1,6 @@
 use sqlx::{SqlitePool, Result, Row};
 use uuid::Uuid;
+use chrono::{DateTime, Utc};
 use crate::models::{LegalCase, CaseSearchRequest, CaseMatch};
 
 pub async fn insert_case(pool: &SqlitePool, case: LegalCase) -> Result<LegalCase> {
@@ -31,20 +32,20 @@ pub async fn insert_case(pool: &SqlitePool, case: LegalCase) -> Result<LegalCase
     .await?;
 
     Ok(LegalCase {
-        id: row.id,
+        id: Uuid::parse_str(&row.id.unwrap_or_default()).unwrap_or_default(),
         case_number: row.case_number,
         case_name: row.case_name,
         country: row.country,
-        date: row.date,
+        date: DateTime::parse_from_rfc3339(&row.date).unwrap().with_timezone(&Utc),
         currency: row.currency,
         key_ruling: row.key_ruling,
         full_text: row.full_text,
         court: row.court,
         case_type: row.case_type,
-        significance_score: row.significance_score,
+        significance_score: row.significance_score.map(|x| x as f32),
         embedding: None, // Will be populated separately
-        created_at: row.created_at,
-        updated_at: row.updated_at,
+        created_at: DateTime::parse_from_rfc3339(&row.created_at).unwrap().with_timezone(&Utc),
+        updated_at: DateTime::parse_from_rfc3339(&row.updated_at).unwrap().with_timezone(&Utc),
     })
 }
 

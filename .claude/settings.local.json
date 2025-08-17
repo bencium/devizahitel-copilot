@@ -38,7 +38,9 @@
       "Bash(./test_pipeline.sh)",
       "Bash(cargo test:*)",
       "Bash(mv:*)",
-      "Bash(./test_ai_system.sh:*)"
+      "Bash(./test_ai_system.sh:*)",
+      "Bash(open http://127.0.0.1:8080/demo.html)",
+      "Bash(cargo check:*)"
     ],
     "deny": [],
     "ask": []

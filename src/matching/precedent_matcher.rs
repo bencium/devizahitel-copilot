@@ -16,7 +16,7 @@ pub struct MatchingResult {
     pub confidence_score: f32,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, serde::Serialize)]
 pub struct ClauseMatch {
     pub clause_id: Uuid,
     pub matched_cases: Vec<CaseMatch>,
